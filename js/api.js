@@ -1,6 +1,8 @@
 (function(){
     "use strict";
 
+    //todo: put api config address
+
     var currnetMap = {};
 
     function loadMap(map) {
