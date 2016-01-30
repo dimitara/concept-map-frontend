@@ -1,11 +1,27 @@
 <html>
     <head>
         <title>Front End</title>
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
     </head>
     <body>
-        
+        <div class="main">
+            <div><h1>Concept map for Moodle</h1></div>
+            <div class="left-bar">
+                <ul>
+                    <li>
+                        <a href="javascript:addNode();">add node</a>
+                    </li>
+                    <li>
+                        <a href="javascript:addRelation();">add rel</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="canvas">
+                <svg id="snap"></svg>
+            </div>
+        </div>
         <script src="js/api.js"></script>
-        <script src="js/raphael.js"></script>
-        <script src="js/app.js"></script>
+        <script src="js/snap.svg-min.js"></script>
+        <script src="js/app-new.js"></script>
     </body>
 </html>
