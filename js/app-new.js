@@ -84,6 +84,7 @@ function addRelation(){
     s.groupRels.add(group);
 }
 
+//callback function when node is dragged by the user
 var moveNode = function(dx, dy, posx, posy) {
     var x = parseFloat(this.parent().attr('x'));
     var y = parseFloat(this.parent().attr('y'));
@@ -110,11 +111,13 @@ var moveNode = function(dx, dy, posx, posy) {
     }
 }
 
+//callback function when user releases the mouse button from node element
 var moveOutNode = function(){
     this.parent().attr('x', this.parent().tempX);
     this.parent().attr('y', this.parent().tempY);
 };
 
+//callback function when user releases the mouse button from relationship element
 var moveOutLine = function(posx, posy, type, el){
     this.parent().x1 = this.parent().select('line').attr('x1');
     this.parent().y1 = this.parent().select('line').attr('y1');
@@ -131,6 +134,7 @@ var moveOutLine = function(posx, posy, type, el){
     }
 }
 
+//callback function when relationship end (dot) has been moved
 var moveLine = function(dx, dy, posx, posy){
     var end = this.attr('data-item');
     var line = this.parent().select('line');
@@ -159,6 +163,8 @@ var moveLine = function(dx, dy, posx, posy){
     }
 }
 
+//function that checks if node is under a relationship then bind the relationship to the line
+//todo: unbind relationship from node
 var selectNode = function(linex, liney){
     var posx = linex;
     var posy = liney;
