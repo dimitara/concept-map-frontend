@@ -48,17 +48,17 @@ function addNode(){
 
 function addRelation(){
     var group = s.group();
-    var line = s.line(100, 80, 200, 80);
+    var line = s.line(20, 20, 100, 20);
 
-    group.x1 = 100;
-    group.y1 = 80;
-    group.x2 = 200;
-    group.y2 = 80;
+    group.x1 = 20;
+    group.y1 = 20;
+    group.x2 = 100;
+    group.y2 = 20;
 
-    var circleOne = s.circle(100, 80, 3);
+    var circleOne = s.circle(20, 20, 5);
     circleOne.attr('data-item', 'one');
 
-    var circleTwo = s.circle(200, 80, 3);
+    var circleTwo = s.circle(100, 20, 5);
     circleTwo.attr('data-item', 'two');
 
     line.attr('stroke', '#000');
@@ -72,6 +72,8 @@ function addRelation(){
     circleTwo.drag(moveLine, function(){}, function(){
         moveOutLine.call(this, parseFloat(line.attr('x2')), parseFloat(line.attr('y2')), 'two', group);
     });
+
+    console.log(group);
 }
 
 var moveNode = function(dx, dy, posx, posy) {
@@ -90,13 +92,25 @@ var moveNode = function(dx, dy, posx, posy) {
         var rels = this.parent().rels;
         for(var i=0; i<rels.length; i++){
             if(rels[i].type === 'one'){
-                rels[i].el.select('line').attr('x1', dx); 
-                rels[i].el.select('line').attr('y1', dy); 
+                moveLine.call(rels[i].el.selectAll('circle')[0], dx, dy);
+
+                /*
+                rels[i].el.select('line').attr('x1', x); 
+                rels[i].el.select('line').attr('y1', y); 
+                rels[i].el.selectAll('circle')[0].attr('cx', x);
+                rels[i].el.selectAll('circle')[0].attr('cy', y);
+                */
             }
 
             if(rels[i].type === 'two'){
-                rels[i].el.select('line').attr('x2', dx); 
-                rels[i].el.select('line').attr('y2', dy); 
+                moveLine.call(rels[i].el.selectAll('circle')[1], dx, dy);
+                /*
+                rels[i].el.select('line').attr('x2', x); 
+                rels[i].el.select('line').attr('y2', y); 
+
+                rels[i].el.selectAll('circle')[1].attr('cx', x);
+                rels[i].el.selectAll('circle')[1].attr('cy', y);
+                */
             }
         }
     }
@@ -126,20 +140,19 @@ var moveOutLine = function(posx, posy, type, el){
 var moveLine = function(dx, dy, posx, posy){
     var end = this.attr('data-item');
     var line = this.parent().select('line');
-    console.log(this);
+    
     var x1 = parseFloat(this.parent().x1);
     var y1 = parseFloat(this.parent().y1);
     var x2 = parseFloat(this.parent().x2);
     var y2 = parseFloat(this.parent().y2);
-
-
-    //selectNode(posx, posy);
 
     if(end === 'one'){
         line.attr('x1', x1 + dx);
         line.attr('y1', y1 + dy);
         this.attr('cx', x1 + dx);
         this.attr('cy', y1 + dy);
+        
+        selectNode(x1 + dx, y1 + dy);
     }
 
     if(end === 'two'){
@@ -147,20 +160,24 @@ var moveLine = function(dx, dy, posx, posy){
         line.attr('y2', y2 + dy);
         this.attr('cx', x2 + dx);
         this.attr('cy', y2 + dy);
+        console.log('w', x2, y2, dx, dy);
+        selectNode(x2 + dx, y2 + dy);
     }
 }
 
-var selectNode = function(posx, posy){
+var selectNode = function(linex, liney){
+    var posx = linex;
+    var posy = liney;
+
     var resultNode = null;
     for(var i = 0; i < nodes.length; i++){
-        var width = parseFloat(nodes[i].attr('width'));
-        var height = parseFloat(nodes[i].attr('height'));
-        var x = parseFloat(nodes[i].attr('x'));
-        var y = parseFloat(nodes[i].attr('y'));
-
+        var width = parseFloat(nodes[i].attr('width')) + nodeDefaultX1;
+        var height = parseFloat(nodes[i].attr('height')) + nodeDefaultY1;
+        var x = parseFloat(nodes[i].attr('x')) + nodeDefaultX1;
+        var y = parseFloat(nodes[i].attr('y')) + nodeDefaultY1;
+        console.log(posx, posy, x, y);
         if(posx > x && posx < x + width && posy > y && posy < y + height){
             //the line is dragged over a node
-            //console.log(dx, dy, posx, posy, x, y, width, height);
             nodes[i].select('rect').attr('fill', '#eee');
             resultNode = nodes[i];
         }
