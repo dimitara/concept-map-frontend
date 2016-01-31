@@ -1,4 +1,8 @@
 var s = Snap('#snap');
+
+s.groupNodes = s.group();
+s.groupRels = s.group();
+
 var nodes = [];
 var rels = [];
 
@@ -44,6 +48,8 @@ function addNode(){
     );
 
     nodes.push(group);
+
+    s.groupNodes.add(group);
 }
 
 function addRelation(){
@@ -74,6 +80,8 @@ function addRelation(){
     });
 
     console.log(group);
+
+    s.groupRels.add(group);
 }
 
 var moveNode = function(dx, dy, posx, posy) {
@@ -93,24 +101,10 @@ var moveNode = function(dx, dy, posx, posy) {
         for(var i=0; i<rels.length; i++){
             if(rels[i].type === 'one'){
                 moveLine.call(rels[i].el.selectAll('circle')[0], dx, dy);
-
-                /*
-                rels[i].el.select('line').attr('x1', x); 
-                rels[i].el.select('line').attr('y1', y); 
-                rels[i].el.selectAll('circle')[0].attr('cx', x);
-                rels[i].el.selectAll('circle')[0].attr('cy', y);
-                */
             }
 
             if(rels[i].type === 'two'){
                 moveLine.call(rels[i].el.selectAll('circle')[1], dx, dy);
-                /*
-                rels[i].el.select('line').attr('x2', x); 
-                rels[i].el.select('line').attr('y2', y); 
-
-                rels[i].el.selectAll('circle')[1].attr('cx', x);
-                rels[i].el.selectAll('circle')[1].attr('cy', y);
-                */
             }
         }
     }
@@ -160,7 +154,7 @@ var moveLine = function(dx, dy, posx, posy){
         line.attr('y2', y2 + dy);
         this.attr('cx', x2 + dx);
         this.attr('cy', y2 + dy);
-        console.log('w', x2, y2, dx, dy);
+        
         selectNode(x2 + dx, y2 + dy);
     }
 }
@@ -175,7 +169,7 @@ var selectNode = function(linex, liney){
         var height = parseFloat(nodes[i].attr('height')) + nodeDefaultY1;
         var x = parseFloat(nodes[i].attr('x')) + nodeDefaultX1;
         var y = parseFloat(nodes[i].attr('y')) + nodeDefaultY1;
-        console.log(posx, posy, x, y);
+        
         if(posx > x && posx < x + width && posy > y && posy < y + height){
             //the line is dragged over a node
             nodes[i].select('rect').attr('fill', '#eee');
