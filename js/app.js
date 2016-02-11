@@ -1,4 +1,4 @@
-var paper = Snap("#snap");
+var paper = Snap("#canvas");
 
 function concept (posX, posY, labelText, conceptId){
 		this.posX = posX;
@@ -6,17 +6,52 @@ function concept (posX, posY, labelText, conceptId){
 		this.labelText = labelText;
 		this.relationSource = [];
 		this.relationTarget = [];
+		this.conceptId = conceptId;
 		//DRAG FUNCTIONS
 		var move = function(dx,dy) {
 				this.attr({
 							transform: this.data('origTransform') + (this.data('origTransform') ? "T" : "t") + [dx, dy]
-
 						});
-				nodeBBox = node.getBBox();
+				nodeBBox[conceptId] = this.getBBox();
 				label.attr({
-					x: nodeBBox.x+25,
-					y: nodeBBox.y+28
+					x: nodeBBox[conceptId].x+25,
+					y: nodeBBox[conceptId].y+28
 				});
+				
+				for (var i = 0; i < relationArr.length; i++) {
+					if (relationArr[i].origin == conceptId){
+						relationArr[i].line.attr({
+							x1: nodeBBox[conceptId].cx,
+							y1: nodeBBox[conceptId].cy
+						});
+						lineBBox[i] = relationArr[i].line.getBBox();
+						relationArr[i].label.attr({
+							x: lineBBox[i].cx,
+							y: lineBBox[i].cy
+							
+						});
+						console.log(nodeBBox[conceptId].cx);
+						console.log(nodeBBox[conceptId].cy);
+					}
+				}
+				
+				for (var i = 0; i < relationArr.length; i++) {
+					if (relationArr[i].target == conceptId){
+						relationArr[i].line.attr({
+							x2: nodeBBox[conceptId].cx,
+							y2: nodeBBox[conceptId].cy
+						});
+						lineBBox[i] = relationArr[i].line.getBBox();
+						relationArr[i].label.attr({
+							x: lineBBox[i].cx,
+							y: lineBBox[i].cy
+							
+						});
+						console.log(nodeBBox[conceptId].cx);
+						console.log(nodeBBox[conceptId].cy);
+					}
+				}
+				
 		}
 
 		var start = function() {
@@ -31,23 +66,19 @@ function concept (posX, posY, labelText, conceptId){
 		function dblclickNode() {
 			if (selConOne == undefined && selConTwo != conceptId){
 				setSelectionOne(conceptId);
-				tempBBox1 = node.getBBox();
 				console.log(selConOne);
 				console.log(selConTwo);
 			}
 			else if (selConTwo == undefined && selConOne != conceptId) {
 				setSelectionTwo(conceptId);
-				tempBBox2 = node.getBBox();
 				console.log(selConOne);
 				console.log(selConTwo);
 			}
 			else if (selConOne == conceptId){
 				setSelectionOne(undefined);
-				tempBBox1 = undefined;
 			}
 			else if (selConTwo == conceptId){
 				setSelectionTwo(undefined);
-				tempBBox2 = undefined;
 			}
 		};
 		
@@ -62,8 +93,9 @@ function concept (posX, posY, labelText, conceptId){
 			fill: "#34495e"
 		})
 		.drag(move, start, stop)
-		.click(dblclickNode);
-		
+		.dblclick(dblclickNode);
+		nodeBBox[conceptId] = node.getBBox();
+
 		
 		//LABEL OBJECT
 		var label = paper.text (posX+25, posY+28, labelText).attr({
@@ -71,15 +103,24 @@ function concept (posX, posY, labelText, conceptId){
 		})
 		.dblclick(dblclicklabelText);
 		
-		this.v = function (){
-			this.mmm = 55;
-		}
 }
 
-function relation (origin, target, relationLabel) {
+function relation (origin, target, relationLabel, relationId) {
 	this.origin = origin;
 	this.target = target;
+	this.relationId = relationId;
 	this.relationLabel = relationLabel;
+	this.line = paper.line(nodeBBox[origin].cx, nodeBBox[origin].cy, nodeBBox[target].cx, nodeBBox[target].cy).attr({
+		stroke: "#000"
+	});
+	lineBBox[relationId] = this.line.getBBox();
+	this.label = paper.text(lineBBox[relationId].cx, lineBBox[relationId].cy, "Hello").dblclick(dblclicklabelText);
+	
+	function dblclicklabelText() {
+		relationArr[relationId].label.attr({
+			text: prompt("Enter labelText name", "labelText")
+		})
+	};
 }
 
 
@@ -91,13 +132,14 @@ function setSelectionTwo(value){
 };
 var selConOne;
 var selConTwo;
-var tempBBox1;
-var tempBBox2;
-
+var nodeBBox = [];
+var lineBBox = [];
 var conceptArr = [];
 var relationArr = [];
 
 function addNode (posX, posY, labelText){
+	if (labelText == undefined)
+		labelText = "New Concept";
 	conceptArr[conceptArr.length] = new concept (posX, posY, labelText, conceptArr.length);
 }
 function addRelation (origin, target, labelText){
@@ -105,13 +147,8 @@ function addRelation (origin, target, labelText){
 		console.log("You need to select two elements");
 	else {
 		console.log("success");
-		relationArr[relationArr.length] = new relation(origin, target, labelText);
-		conceptArr[origin].relationSource = relationArr.length-1;
-		conceptArr[target].relationTarget = relationArr.length-1;
-		paper.line(tempBBox1.cx, tempBBox1.y, tempBBox2.cx, tempBBox2.cy).attr({
-			stroke: "#000"
-		})
+		relationArr[relationArr.length] = new relation(origin, target, labelText, relationArr.length);
+		conceptArr[origin].relationSource[conceptArr[origin].relationSource.length] = relationArr.length-1;
+		conceptArr[target].relationTarget[conceptArr[target].relationTarget.length] = relationArr.length-1;
 	}
 }
-addNode(100,100, "testing");
-
