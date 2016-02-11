@@ -17,7 +17,7 @@ function concept (posX, posY, labelText, conceptId){
 					x: nodeBBox[conceptId].x+25,
 					y: nodeBBox[conceptId].y+28
 				});
-				
+				//RELATION LINE AND LABEL DRAG
 				for (var i = 0; i < relationArr.length; i++) {
 					if (relationArr[i].origin == conceptId){
 						relationArr[i].line.attr({
