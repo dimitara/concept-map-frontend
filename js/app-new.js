@@ -1,6 +1,8 @@
 var paper = Snap("#canvas");
 
-var LINE_WIDTH = 2;
+var LINE_WIDTH = 3;
+var NODE_BACKGROUND = "#2c3e50";
+var NODE_STROKE_SELECTED = "#0F9923";
 
 function concept (posX, posY, labelText, conceptId){
         this.posX = posX;
@@ -56,24 +58,22 @@ function concept (posX, posY, labelText, conceptId){
         function dblclickNode() {
             if (selConOne == undefined && selConTwo != conceptId){
                 setSelectionOne(conceptId);
-                this.attr({fill: "#2c3e50"});
-                console.log(selConOne);
-                console.log(selConTwo);
+                this.attr({fill: NODE_BACKGROUND});
+                this.attr({stroke: NODE_STROKE_SELECTED});
             }
             else if (selConTwo == undefined && selConOne != conceptId) {
                 setSelectionTwo(conceptId);
-                this.attr({fill: "#2c3e50"});
-                console.log(selConOne);
-                console.log(selConTwo);
+                this.attr({fill: NODE_BACKGROUND});
+                this.attr({stroke: NODE_STROKE_SELECTED});
             }
             else if (selConOne == conceptId){
                 setSelectionOne(undefined);
-                this.attr({fill: "#34495e",
+                this.attr({stroke: NODE_STROKE_SELECTED,
                 });
             }
             else if (selConTwo == conceptId){
                 setSelectionTwo(undefined);
-                this.attr({fill: "#34495e"
+                this.attr({stroke: NODE_STROKE_SELECTED
                 });
             }
         };
@@ -86,8 +86,9 @@ function concept (posX, posY, labelText, conceptId){
         
         //NODE OBJECT
         this.node = paper.rect(posX, posY, 125, 50, 10).attr({
-            fill: "#34495e"
-            //"fill-opacity": 0.9
+            'fill': NODE_BACKGROUND,
+            'stroke': NODE_BACKGROUND,
+            'stroke-width': LINE_WIDTH
         })
         .drag(move, start, stop)
         .dblclick(dblclickNode);
@@ -130,9 +131,11 @@ function relation (origin, target, relationLabel, relationId) {
 }
 function setSelectionOne(value){
     selConOne = value;
+    console.log('xs', selConOne, selConTwo);
 };
 function setSelectionTwo(value){
     selConTwo = value;
+    console.log('we', selConOne, selConTwo);
 };
 var selConOne;
 var selConTwo;
@@ -146,14 +149,11 @@ function addNode (posX, posY, labelText){
     conceptArr[conceptArr.length] = new concept (posX, posY, labelText, conceptArr.length);
 }
 function addRelation (origin, target, labelText){
-    relationArr[relationArr.length] = new relation(origin, target, labelText, relationArr.length);
-    /*
     if (origin == undefined || target == undefined)
         console.log("You need to select two elements");
     else {
         relationArr[relationArr.length] = new relation(origin, target, labelText, relationArr.length);
     }
-    */
 }
 
 function deleteConcept (conceptId){
