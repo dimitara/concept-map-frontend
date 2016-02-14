@@ -8,6 +8,8 @@ var nodeDefaultY1 = 100;
 var nodeDefaultX2 = 100;
 var nodeDefaultY2 = 50;
 
+var globalConceptId = 0;
+
 function concept(posX, posY, labelText, conceptId) {
     this.posX = posX;
     this.posY = posY;
@@ -164,7 +166,7 @@ function addNode(posX, posY, labelText) {
     if (labelText == undefined) labelText = "New Concept";
     if (posX == undefined) posX = 100;
     if (posY == undefined) posY = 100;
-    conceptArr[conceptArr.length] = new concept(posX, posY, labelText, conceptArr.length);
+    conceptArr[conceptArr.length] = new concept(posX, posY, labelText, ++globalConceptId);
 }
 
 function addRelation(origin, target, labelText) {
@@ -176,16 +178,26 @@ function addRelation(origin, target, labelText) {
 }
 
 function deleteConcept(conceptId) {
-    conceptArr[conceptId].node.remove();
-    conceptArr[conceptId].label.remove();
-    conceptArr.splice(conceptId, 1);
-    for (var i = 0; i < relationArr.length; i++) {
-        if (relationArr[i].origin == conceptId || relationArr[i].target == conceptId) {
-            relationArr[i].line.remove();
-            relationArr[i].label.remove();
-            relationArr.splice(i, 1);
-            console.log("Concept Deleted");
-            i--;
+    var index = -1;
+    for(var i=0; i<conceptArr.length; i++){
+        if(conceptArr[i].conceptId === conceptId){
+            index = i;
+            break;
+        }
+    }
+
+    if(index > -1){
+        conceptArr[index].group.remove();
+        conceptArr.splice(index, 1);    
+
+        for (var i = 0; i < relationArr.length; i++) {
+            if (relationArr[i].origin == conceptId || relationArr[i].target == conceptId) {
+                relationArr[i].line.remove();
+                relationArr[i].label.remove();
+                relationArr.splice(i, 1);
+                console.log("Concept Deleted");
+                i--;
+            }
         }
     }
 };
