@@ -93,16 +93,20 @@ function concept(posX, posY, labelText, conceptId) {
     };
 
     function dblclicklabelText() {
-        var newText = prompt("Enter Node name", conceptArr[conceptId].label.attr('text'));
+        var node = conceptArr.filter(function(concept){
+            return concept.conceptId === conceptId;
+        })[0];
+
+        var newText = prompt("Enter Node name", node.label.attr('text'));
 
         if (newText) {
-            conceptArr[conceptId].label.attr({
+            node.label.attr({
                 text: newText
             });
 
-            var labelBBox = conceptArr[conceptId].label.getBBox();
+            var labelBBox = node.label.getBBox();
 
-            conceptArr[conceptId].node.attr({
+            node.node.attr({
                 'width': labelBBox.width + 50
             });
         }
