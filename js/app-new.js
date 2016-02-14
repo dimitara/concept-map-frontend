@@ -22,31 +22,41 @@ function concept(posX, posY, labelText, conceptId) {
             transform: this.parent().data('origTransform') + (this.parent().data('origTransform') ? "T" : "t") + [dx, dy]
         });
 
+        var originBBox = this.getBBox();
+        var ox = this.parent().getBBox().x + originBBox.width / 2;
+        var oy = this.parent().getBBox().y + originBBox.height / 2;
+
         for (var i = 0; i < relationArr.length; i++) {
-             if (relationArr[i].origin == conceptId){
-                 relationArr[i].line.attr({
-                    x1: conceptArr[conceptId].node.getBBox().cx,
-                     y1: conceptArr[conceptId].node.getBBox().cy
-                 });
-                 relationArr[i].label.attr({
-                     x: relationArr[i].line.getBBox().cx,
-                     y: relationArr[i].line.getBBox().cy     
-                 });
-             }
-         }
-         
-         for (var i = 0; i < relationArr.length; i++) {
-             if (relationArr[i].target == conceptId){
-                 relationArr[i].line.attr({
-                     x2: conceptArr[conceptId].node.getBBox().cx,
-                     y2: conceptArr[conceptId].node.getBBox().cy
-                 });
-                 relationArr[i].label.attr({
-                     x: relationArr[i].line.getBBox().cx,
-                     y: relationArr[i].line.getBBox().cy
-                 });
-             }
-         }
+            if (relationArr[i].origin === conceptId) {
+                relationArr[i].line.attr({
+                    x1: ox,
+                    y1: oy
+                });
+
+                /*
+                relationArr[i].label.attr({
+                    x: tx,
+                    y: ty
+                });
+                */
+            }
+        }
+
+        for (var i = 0; i < relationArr.length; i++) {
+            if (relationArr[i].target == conceptId) {
+                relationArr[i].line.attr({
+                    x2: ox,
+                    y2: oy
+                });
+
+                /*
+                relationArr[i].label.attr({
+                    x: relationArr[i].line.getBBox().cx,
+                    y: relationArr[i].line.getBBox().cy
+                });
+                */
+            }
+        }
     }
 
     var start = function() {
@@ -85,14 +95,16 @@ function concept(posX, posY, labelText, conceptId) {
     function dblclicklabelText() {
         var newText = prompt("Enter Node name", conceptArr[conceptId].label.attr('text'));
 
-        if(newText){
+        if (newText) {
             conceptArr[conceptId].label.attr({
                 text: newText
             });
 
             var labelBBox = conceptArr[conceptId].label.getBBox();
-            
-            conceptArr[conceptId].node.attr({'width': labelBBox.width + 50});
+
+            conceptArr[conceptId].node.attr({
+                'width': labelBBox.width + 50
+            });
         }
     };
 
@@ -120,14 +132,22 @@ function relation(origin, target, relationLabel, relationId) {
     this.target = target;
     this.relationId = relationId;
     this.relationLabel = relationLabel;
-    var originBBox = conceptArr[origin].node.node.getBBox();
-    var targetBBox = conceptArr[target].node.node.getBBox();
+    
+    var originConcept = conceptArr.filter(function(concept){
+        return concept.conceptId === origin;
+    })[0];
 
-    var ox = conceptArr[origin].group.getBBox().x + originBBox.width/2;
-    var oy = conceptArr[origin].group.getBBox().y + originBBox.height/2;
+    var targetConcept = conceptArr.filter(function(concept){
+        return concept.conceptId === target;
+    })[0];
 
-    var tx = conceptArr[target].group.getBBox().x + targetBBox.width/2;
-    var ty = conceptArr[target].group.getBBox().y + targetBBox.height/2;
+    var originBBox = originConcept.node.node.getBBox();
+    var ox = originConcept.group.getBBox().x + originBBox.width / 2;
+    var oy = originConcept.group.getBBox().y + originBBox.height / 2;
+
+    var targetBBox = targetConcept.node.node.getBBox();
+    var tx = targetConcept.group.getBBox().x + targetBBox.width / 2;
+    var ty = targetConcept.group.getBBox().y + targetBBox.height / 2;
 
     this.line = paper.line(ox, oy, tx, ty).attr({
         stroke: "#34495e",
@@ -142,7 +162,7 @@ function relation(origin, target, relationLabel, relationId) {
     function dblclicklabelText() {
         var newText = prompt("Enter labelText name", "labelText");
 
-        if(newText){
+        if (newText) {
             relationArr[relationId].label.attr({
                 text: newText
             })
@@ -179,16 +199,16 @@ function addRelation(origin, target, labelText) {
 
 function deleteConcept(conceptId) {
     var index = -1;
-    for(var i=0; i<conceptArr.length; i++){
-        if(conceptArr[i].conceptId === conceptId){
+    for (var i = 0; i < conceptArr.length; i++) {
+        if (conceptArr[i].conceptId === conceptId) {
             index = i;
             break;
         }
     }
 
-    if(index > -1){
+    if (index > -1) {
         conceptArr[index].group.remove();
-        conceptArr.splice(index, 1);    
+        conceptArr.splice(index, 1);
 
         for (var i = 0; i < relationArr.length; i++) {
             if (relationArr[i].origin == conceptId || relationArr[i].target == conceptId) {
