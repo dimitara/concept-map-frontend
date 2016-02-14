@@ -1,192 +1,158 @@
-var s = Snap('#snap');
+var paper = Snap("#canvas");
 
-s.groupNodes = s.group();
-s.groupRels = s.group();
+function concept (posX, posY, labelText, conceptId){
+        this.posX = posX;
+        this.posY = posY;
+        this.labelText = labelText;
+        this.conceptId = conceptId;
+        //DRAG FUNCTIONS
+        var move = function(dx,dy) {
+                this.attr({
+                            transform: this.data('origTransform') + (this.data('origTransform') ? "T" : "t") + [dx, dy]
+                        });
+                conceptArr[conceptId].label.attr({
+                    x: conceptArr[conceptId].node.getBBox().x+25,
+                    y: conceptArr[conceptId].node.getBBox().y+28
+                });
+                
+                for (var i = 0; i < relationArr.length; i++) {
+                    if (relationArr[i].origin == conceptId){
+                        relationArr[i].line.attr({
+                            x1: conceptArr[conceptId].node.getBBox().cx,
+                            y1: conceptArr[conceptId].node.getBBox().cy
+                        });
+                        relationArr[i].label.attr({
+                            x: relationArr[i].line.getBBox().cx,
+                            y: relationArr[i].line.getBBox().cy     
+                        });
+                    }
+                }
+                
+                for (var i = 0; i < relationArr.length; i++) {
+                    if (relationArr[i].target == conceptId){
+                        relationArr[i].line.attr({
+                            x2: conceptArr[conceptId].node.getBBox().cx,
+                            y2: conceptArr[conceptId].node.getBBox().cy
+                        });
+                        relationArr[i].label.attr({
+                            x: relationArr[i].line.getBBox().cx,
+                            y: relationArr[i].line.getBBox().cy
+                        });
+                    }
+                }
+        }
 
-var nodes = [];
-var rels = [];
+        var start = function() {
+                this.data('origTransform', this.transform().local );
+                
+        }
+        stop = function() {
+                console.log('finished dragging');
+                console.log(this.node.getBBox());
+        }
+        //DOUBLE CLICK FUNCTIONS
+        function dblclickNode() {
+            if (selConOne == undefined && selConTwo != conceptId){
+                setSelectionOne(conceptId);
+                this.attr({fill: "#2c3e50"});
+                console.log(selConOne);
+                console.log(selConTwo);
+            }
+            else if (selConTwo == undefined && selConOne != conceptId) {
+                setSelectionTwo(conceptId);
+                this.attr({fill: "#2c3e50"});
+                console.log(selConOne);
+                console.log(selConTwo);
+            }
+            else if (selConOne == conceptId){
+                setSelectionOne(undefined);
+                this.attr({fill: "#34495e",
+                });
+            }
+            else if (selConTwo == conceptId){
+                setSelectionTwo(undefined);
+                this.attr({fill: "#34495e"
+                });
+            }
+        };
+        
+        function dblclicklabelText() {
+        conceptArr[conceptId].label.attr({
+                text: prompt("Enter labelText name", "labelText")
+            })
+        };
+        
+        //NODE OBJECT
+        this.node = paper.rect(posX, posY, 125, 50, 10).attr({
+            fill: "#34495e"
+            //"fill-opacity": 0.9
+        })
+        .drag(move, start, stop)
+        .dblclick(dblclickNode);
 
-var nodeDefaultX1 = 100;
-var nodeDefaultY1 = 100;
-var nodeDefaultX2 = 100;
-var nodeDefaultY2 = 50;
-var rFactor = 5;
+        
+        //LABEL OBJECT
+        this.label = paper.text (posX+25, posY+28, labelText).attr({
+            fill: "#ecf0f1"
+        })
+        .dblclick(dblclicklabelText);
+        
+}
 
-
-function addNode(){
-    var group = s.group();
-    group.attr('height', 50);
-    group.attr('width', 100);
-    group.attr('x', 0);
-    group.attr('y', 0);
-    group.rels = [];
-
-    var node = s.rect(nodeDefaultX1, nodeDefaultY1, nodeDefaultX2, nodeDefaultY2, rFactor, rFactor);
-    node.attr('stroke', '#000');
-    node.attr('fill', '#fff');
-    var nodeText = s.text(nodeDefaultX1 + 3, nodeDefaultY1+nodeDefaultY2/1.7, 'Concept Node');
-    nodeText.attr('fill', '#000');
+function relation (origin, target, relationLabel, relationId) {
+    this.origin = origin;
+    this.target = target;
+    this.relationId = relationId;
+    this.relationLabel = relationLabel;
+    this.line = paper.line(conceptArr[origin].node.getBBox().cx, conceptArr[origin].node.getBBox().cy, conceptArr[target].node.getBBox().cx, conceptArr[target].node.getBBox().cy).attr({
+        stroke: "#34495e",
+        strokeWidth: "5"
+    });
+    this.label = paper.text(this.line.getBBox().cx, this.line.getBBox().cy, "Hello").dblclick(dblclicklabelText);
     
-    group.add(node);
-    group.add(nodeText);
-
-    nodeText.click(function(){
-        this.attr({text: 'Concept Node'});
-        //node.attr('width', this.getBBox().width + 20);
-        //node.parent().attr('width', this.getBBox().width + 20);
-
-        //todo: reposition the text inside the rectangle
-    });
-
-    node.drag(moveNode,
-        function() {
-            
-        },
-        function() {
-            moveOutNode.call(this);
-        }
-    );
-
-    nodes.push(group);
-
-    s.groupNodes.add(group);
+    function dblclicklabelText() {
+        relationArr[relationId].label.attr({
+            text: prompt("Enter labelText name", "labelText")
+        })
+    };
 }
-
-function addRelation(){
-    var group = s.group();
-    var line = s.line(20, 20, 100, 20);
-
-    group.x1 = 20;
-    group.y1 = 20;
-    group.x2 = 100;
-    group.y2 = 20;
-
-    var circleOne = s.circle(20, 20, 5);
-    circleOne.attr('data-item', 'one');
-
-    var circleTwo = s.circle(100, 20, 5);
-    circleTwo.attr('data-item', 'two');
-
-    line.attr('stroke', '#000');
-    group.add(line);
-    group.add(circleOne);
-    group.add(circleTwo);
-
-    circleOne.drag(moveLine, function(){}, function(){
-        moveOutLine.call(this, parseFloat(line.attr('x1')), parseFloat(line.attr('y1')), 'one', group);
-    });
-    circleTwo.drag(moveLine, function(){}, function(){
-        moveOutLine.call(this, parseFloat(line.attr('x2')), parseFloat(line.attr('y2')), 'two', group);
-    });
-
-    console.log(group);
-
-    s.groupRels.add(group);
-}
-
-//callback function when node is dragged by the user
-var moveNode = function(dx, dy, posx, posy) {
-    var x = parseFloat(this.parent().attr('x'));
-    var y = parseFloat(this.parent().attr('y'));
-
-    x += dx;
-    y += dy;
-
-    this.parent().tempX = x;
-    this.parent().tempY = y;
-
-    this.parent().attr('transform', 'translate(' + x + ',' + y + ')');
-
-    if(this.parent().rels){
-        var rels = this.parent().rels;
-        for(var i=0; i<rels.length; i++){
-            if(rels[i].type === 'one'){
-                moveLine.call(rels[i].el.selectAll('circle')[0], dx, dy);
-            }
-
-            if(rels[i].type === 'two'){
-                moveLine.call(rels[i].el.selectAll('circle')[1], dx, dy);
-            }
-        }
-    }
-}
-
-//callback function when user releases the mouse button from node element
-var moveOutNode = function(){
-    this.parent().attr('x', this.parent().tempX);
-    this.parent().attr('y', this.parent().tempY);
+function setSelectionOne(value){
+    selConOne = value;
 };
+function setSelectionTwo(value){
+    selConTwo = value;
+};
+var selConOne;
+var selConTwo;
+var conceptArr = [];
+var relationArr = [];
 
-//callback function when user releases the mouse button from relationship element
-var moveOutLine = function(posx, posy, type, el){
-    this.parent().x1 = this.parent().select('line').attr('x1');
-    this.parent().y1 = this.parent().select('line').attr('y1');
-    this.parent().x2 = this.parent().select('line').attr('x2');
-    this.parent().y2 = this.parent().select('line').attr('y2');
-
-    var resultNode = selectNode(posx, posy);
-
-    if(resultNode){
-        resultNode.rels.push({
-            el: el,
-            type: type
-        });
+function addNode (posX, posY, labelText){
+    if (labelText == undefined) labelText = "New Concept";
+    if (posX == undefined) posX = 100;
+    if (posY == undefined) posY = 100;
+    conceptArr[conceptArr.length] = new concept (posX, posY, labelText, conceptArr.length);
+}
+function addRelation (origin, target, labelText){
+    if (origin == undefined || target == undefined)
+        console.log("You need to select two elements");
+    else {
+        console.log("success");
+        relationArr[relationArr.length] = new relation(origin, target, labelText, relationArr.length);
     }
 }
 
-//callback function when relationship end (dot) has been moved
-var moveLine = function(dx, dy, posx, posy){
-    var end = this.attr('data-item');
-    var line = this.parent().select('line');
-    
-    var x1 = parseFloat(this.parent().x1);
-    var y1 = parseFloat(this.parent().y1);
-    var x2 = parseFloat(this.parent().x2);
-    var y2 = parseFloat(this.parent().y2);
-
-    if(end === 'one'){
-        line.attr('x1', x1 + dx);
-        line.attr('y1', y1 + dy);
-        this.attr('cx', x1 + dx);
-        this.attr('cy', y1 + dy);
-        
-        selectNode(x1 + dx, y1 + dy);
-    }
-
-    if(end === 'two'){
-        line.attr('x2', x2 + dx);
-        line.attr('y2', y2 + dy);
-        this.attr('cx', x2 + dx);
-        this.attr('cy', y2 + dy);
-        
-        selectNode(x2 + dx, y2 + dy);
-    }
-}
-
-//function that checks if node is under a relationship then bind the relationship to the line
-//todo: unbind relationship from node
-var selectNode = function(linex, liney){
-    var posx = linex;
-    var posy = liney;
-
-    var resultNode = null;
-    for(var i = 0; i < nodes.length; i++){
-        var width = parseFloat(nodes[i].attr('width')) + nodeDefaultX1;
-        var height = parseFloat(nodes[i].attr('height')) + nodeDefaultY1;
-        var x = parseFloat(nodes[i].attr('x')) + nodeDefaultX1;
-        var y = parseFloat(nodes[i].attr('y')) + nodeDefaultY1;
-        
-        if(posx > x && posx < x + width && posy > y && posy < y + height){
-            //the line is dragged over a node
-            nodes[i].select('rect').attr('fill', '#eee');
-            resultNode = nodes[i];
+function deleteConcept (conceptId){
+    conceptArr[conceptId].node.remove();
+    conceptArr[conceptId].label.remove();
+    conceptArr.splice(conceptId, 1);
+    for (var i = 0; i < relationArr.length; i++){
+        if(relationArr[i].origin == conceptId || relationArr[i].target == conceptId){
+            relationArr[i].line.remove();
+            relationArr[i].label.remove();
+            relationArr.splice(i,1);
+            console.log("Concept Deleted");
+            i--;
         }
-        else{
-            nodes[i].select('rect').attr('fill', '#fff');
-        }
-    }
-
-    return resultNode;
-}
-
-//addNode();
+    }       
+};
