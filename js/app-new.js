@@ -131,11 +131,9 @@ function relation (origin, target, relationLabel, relationId) {
 }
 function setSelectionOne(value){
     selConOne = value;
-    console.log('xs', selConOne, selConTwo);
 };
 function setSelectionTwo(value){
     selConTwo = value;
-    console.log('we', selConOne, selConTwo);
 };
 var selConOne;
 var selConTwo;
