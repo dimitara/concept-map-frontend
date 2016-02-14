@@ -1,5 +1,7 @@
 var paper = Snap("#canvas");
 
+var LINE_WIDTH = 2;
+
 function concept (posX, posY, labelText, conceptId){
         this.posX = posX;
         this.posY = posY;
@@ -104,11 +106,21 @@ function relation (origin, target, relationLabel, relationId) {
     this.target = target;
     this.relationId = relationId;
     this.relationLabel = relationLabel;
-    this.line = paper.line(conceptArr[origin].node.getBBox().cx, conceptArr[origin].node.getBBox().cy, conceptArr[target].node.getBBox().cx, conceptArr[target].node.getBBox().cy).attr({
+    var fcx = conceptArr[origin] ? conceptArr[origin].node.getBBox().cx : 100;
+    var fcy = conceptArr[origin] ? conceptArr[origin].node.getBBox().cy : 100;
+    var scx = conceptArr[target] ? conceptArr[target].node.getBBox().cx : 300;
+    var scy = conceptArr[target] ? conceptArr[target].node.getBBox().cy : 100;
+
+
+    this.line = paper.line(fcx, fcy, scx, scy).attr({
         stroke: "#34495e",
-        strokeWidth: "5"
-    });
-    this.label = paper.text(this.line.getBBox().cx, this.line.getBBox().cy, "Hello").dblclick(dblclicklabelText);
+        strokeWidth: LINE_WIDTH
+    }).dblclick(dblclicklabelText);
+
+    var lineBBox = this.line.getBBox();
+    this.label = paper.text(lineBBox.cx, lineBBox.cy - 4, "new relation").dblclick(dblclicklabelText);
+    var labelBBox = this.label.getBBox();
+    //console.log(lineBBox..width - labelBBox.width);
     
     function dblclicklabelText() {
         relationArr[relationId].label.attr({
@@ -134,12 +146,14 @@ function addNode (posX, posY, labelText){
     conceptArr[conceptArr.length] = new concept (posX, posY, labelText, conceptArr.length);
 }
 function addRelation (origin, target, labelText){
+    relationArr[relationArr.length] = new relation(origin, target, labelText, relationArr.length);
+    /*
     if (origin == undefined || target == undefined)
         console.log("You need to select two elements");
     else {
-        console.log("success");
         relationArr[relationArr.length] = new relation(origin, target, labelText, relationArr.length);
     }
+    */
 }
 
 function deleteConcept (conceptId){
