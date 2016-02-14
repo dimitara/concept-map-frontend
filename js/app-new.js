@@ -13,6 +13,7 @@ var globalRelationId = 0;
 
 var selConOne;
 var selConTwo;
+var selRelation
 var conceptArr = [];
 var relationArr = [];
 
@@ -165,7 +166,7 @@ function relation(origin, target, relationLabel, relationId) {
     this.line = groupRelationships.line(ox, oy, tx, ty).attr({
         stroke: "#34495e",
         strokeWidth: LINE_WIDTH
-    }).dblclick(dblclicklabelText);
+    }).dblclick(dblclickRelation);
 
     var lineBBox = this.line.getBBox();
     this.label = groupRelationships.text(lineBBox.cx, lineBBox.cy - 4, "new relation").dblclick(dblclicklabelText);
@@ -177,7 +178,6 @@ function relation(origin, target, relationLabel, relationId) {
                 return rel.relationId === relationId;
             })[0];
 		var newText = prompt("Enter labelText name", relation.label.attr('text'));
-			
         if (newText) {
            
 
@@ -186,6 +186,27 @@ function relation(origin, target, relationLabel, relationId) {
             })
         }
     };
+	
+	function dblclickRelation (){
+		var relation = relationArr.filter(function(rel){
+			return rel.relationId === relationId;
+        })[0];
+		if (selRelation === undefined){
+			setRelSelection(relationId);
+			relation.line.attr({
+				stroke: NODE_STROKE_SELECTED
+			})
+		}
+		else if (selRelation === relationId){
+			setRelSelection(undefined);
+			relation.line.attr({
+				stroke: NODE_BACKGROUND
+			});				
+		}
+			
+			
+
+	};
 }
 
 function setSelectionOne(value) {
@@ -196,6 +217,9 @@ function setSelectionTwo(value) {
     selConTwo = value;
 };
 
+function setRelSelection(value) {
+	selRelation = value;
+}
 function addNode(posX, posY, labelText) {
     if (labelText == undefined) labelText = "New Concept";
     if (posX == undefined) posX = 100;
@@ -208,6 +232,21 @@ function addRelation(origin, target, labelText) {
         console.log("You need to select two elements");
     else {
         relationArr[relationArr.length] = new relation(origin, target, labelText, ++globalRelationId);
+		for (var i = 0; i < conceptArr.length; i++){
+			if (conceptArr[i].conceptId === origin){
+				conceptArr[i].node.attr({
+					stroke: NODE_BACKGROUND
+				});
+				selConOne = undefined;
+			}
+			else if(conceptArr[i].conceptId === target){}{
+				conceptArr[i].node.attr({
+					stroke: NODE_BACKGROUND
+					
+				});
+				selConTwo = undefined;
+			}
+		}
     }
 }
 
@@ -223,6 +262,7 @@ function deleteConcept(conceptId) {
     if (index > -1) {
         conceptArr[index].group.remove();
         conceptArr.splice(index, 1);
+		selConOne = undefined;
 
         for (var i = 0; i < relationArr.length; i++) {
             if (relationArr[i].origin == conceptId || relationArr[i].target == conceptId) {
@@ -235,3 +275,27 @@ function deleteConcept(conceptId) {
         }
     }
 };
+
+function deleteRelation(relationId) {
+    var index = -1;
+    for (var i = 0; i < relationArr.length; i++) {
+        if (relationArr[i].relationId === relationId) {
+            index = i;
+            break;
+        }
+    }
+
+    if (index > -1) {
+		relationArr[index].label.remove();
+		relationArr[index].line.remove();
+        relationArr.splice(index, 1);
+		selRelation = undefined;
+		console.log("Relation Removed")
+
+
+    }
+};
+
+addNode();
+addNode();
+addRelation(1,2);
