@@ -56,9 +56,7 @@ function concept(posX, posY, labelText, conceptId) {
         if (selConOne == undefined && selConTwo != conceptId) {
             setSelectionOne(conceptId);
             this.attr({
-                fill: NODE_BACKGROUND
-            });
-            this.attr({
+                fill: NODE_BACKGROUND,
                 stroke: NODE_STROKE_SELECTED
             });
         } else if (selConTwo == undefined && selConOne != conceptId) {
@@ -72,12 +70,12 @@ function concept(posX, posY, labelText, conceptId) {
         } else if (selConOne == conceptId) {
             setSelectionOne(undefined);
             this.attr({
-                stroke: NODE_STROKE_SELECTED,
+                stroke: NODE_BACKGROUND,
             });
         } else if (selConTwo == conceptId) {
             setSelectionTwo(undefined);
             this.attr({
-                stroke: NODE_STROKE_SELECTED
+                stroke: NODE_BACKGROUND
             });
         }
     };
@@ -120,13 +118,16 @@ function relation(origin, target, relationLabel, relationId) {
     this.target = target;
     this.relationId = relationId;
     this.relationLabel = relationLabel;
-    var fcx = conceptArr[origin] ? conceptArr[origin].node.getBBox().cx : 100;
-    var fcy = conceptArr[origin] ? conceptArr[origin].node.getBBox().cy : 100;
-    var scx = conceptArr[target] ? conceptArr[target].node.getBBox().cx : 300;
-    var scy = conceptArr[target] ? conceptArr[target].node.getBBox().cy : 100;
+    var originBBox = conceptArr[origin].node.node.getBBox();
+    var targetBBox = conceptArr[target].node.node.getBBox();
 
+    var ox = conceptArr[origin].group.getBBox().x + originBBox.width/2;
+    var oy = conceptArr[origin].group.getBBox().y + originBBox.height/2;
 
-    this.line = paper.line(fcx, fcy, scx, scy).attr({
+    var tx = conceptArr[target].group.getBBox().x + targetBBox.width/2;
+    var ty = conceptArr[target].group.getBBox().y + targetBBox.height/2;
+
+    this.line = paper.line(ox, oy, tx, ty).attr({
         stroke: "#34495e",
         strokeWidth: LINE_WIDTH
     }).dblclick(dblclicklabelText);
