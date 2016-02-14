@@ -14,10 +14,37 @@ function concept(posX, posY, labelText, conceptId) {
     this.labelText = labelText;
     this.conceptId = conceptId;
     //DRAG FUNCTIONS
+
     var move = function(dx, dy) {
         this.parent().attr({
             transform: this.parent().data('origTransform') + (this.parent().data('origTransform') ? "T" : "t") + [dx, dy]
         });
+
+        for (var i = 0; i < relationArr.length; i++) {
+             if (relationArr[i].origin == conceptId){
+                 relationArr[i].line.attr({
+                    x1: conceptArr[conceptId].node.getBBox().cx,
+                     y1: conceptArr[conceptId].node.getBBox().cy
+                 });
+                 relationArr[i].label.attr({
+                     x: relationArr[i].line.getBBox().cx,
+                     y: relationArr[i].line.getBBox().cy     
+                 });
+             }
+         }
+         
+         for (var i = 0; i < relationArr.length; i++) {
+             if (relationArr[i].target == conceptId){
+                 relationArr[i].line.attr({
+                     x2: conceptArr[conceptId].node.getBBox().cx,
+                     y2: conceptArr[conceptId].node.getBBox().cy
+                 });
+                 relationArr[i].label.attr({
+                     x: relationArr[i].line.getBBox().cx,
+                     y: relationArr[i].line.getBBox().cy
+                 });
+             }
+         }
     }
 
     var start = function() {
@@ -66,7 +93,6 @@ function concept(posX, posY, labelText, conceptId) {
             var labelBBox = conceptArr[conceptId].label.getBBox();
             
             conceptArr[conceptId].node.attr({'width': labelBBox.width + 50});
-
         }
     };
 
@@ -81,17 +107,12 @@ function concept(posX, posY, labelText, conceptId) {
         'fill': NODE_BACKGROUND,
         'stroke': NODE_BACKGROUND,
         'stroke-width': LINE_WIDTH
-    })
-        .drag(move, start, stop)
-        .dblclick(dblclickNode);
-
+    }).drag(move, start).dblclick(dblclickNode);
 
     //LABEL OBJECT
     this.label = this.group.text(posX + 25, posY + 28, labelText).attr({
         fill: "#ecf0f1"
-    })
-        .dblclick(dblclicklabelText);
-
+    }).dblclick(dblclicklabelText);
 }
 
 function relation(origin, target, relationLabel, relationId) {
