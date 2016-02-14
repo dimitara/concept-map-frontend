@@ -11,6 +11,14 @@ var nodeDefaultY2 = 50;
 var globalConceptId = 0;
 var globalRelationId = 0;
 
+var selConOne;
+var selConTwo;
+var conceptArr = [];
+var relationArr = [];
+
+var groupRelationships = paper.group({id: 'rels'});
+var groupNodes = paper.group({id: 'nodes'});
+
 function concept(posX, posY, labelText, conceptId) {
     this.posX = posX;
     this.posY = posY;
@@ -113,7 +121,7 @@ function concept(posX, posY, labelText, conceptId) {
         }
     };
 
-    this.group = paper.group();
+    this.group = groupNodes.group();
     this.group.attr({
         x: 0,
         y: 0
@@ -154,13 +162,13 @@ function relation(origin, target, relationLabel, relationId) {
     var tx = targetConcept.group.getBBox().x + targetBBox.width / 2;
     var ty = targetConcept.group.getBBox().y + targetBBox.height / 2;
 
-    this.line = paper.line(ox, oy, tx, ty).attr({
+    this.line = groupRelationships.line(ox, oy, tx, ty).attr({
         stroke: "#34495e",
         strokeWidth: LINE_WIDTH
     }).dblclick(dblclicklabelText);
 
     var lineBBox = this.line.getBBox();
-    this.label = paper.text(lineBBox.cx, lineBBox.cy - 4, "new relation").dblclick(dblclicklabelText);
+    this.label = groupRelationships.text(lineBBox.cx, lineBBox.cy - 4, "new relation").dblclick(dblclicklabelText);
     var labelBBox = this.label.getBBox();
     //console.log(lineBBox..width - labelBBox.width);
 
@@ -171,7 +179,7 @@ function relation(origin, target, relationLabel, relationId) {
             var relation = relationArr.filter(function(rel){
                 return rel.relationId === relationId;
             })[0];
-            
+
             relation.label.attr({
                 text: newText
             })
@@ -186,10 +194,6 @@ function setSelectionOne(value) {
 function setSelectionTwo(value) {
     selConTwo = value;
 };
-var selConOne;
-var selConTwo;
-var conceptArr = [];
-var relationArr = [];
 
 function addNode(posX, posY, labelText) {
     if (labelText == undefined) labelText = "New Concept";
