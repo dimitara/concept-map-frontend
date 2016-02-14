@@ -9,6 +9,7 @@ var nodeDefaultX2 = 100;
 var nodeDefaultY2 = 50;
 
 var globalConceptId = 0;
+var globalRelationId = 0;
 
 function concept(posX, posY, labelText, conceptId) {
     this.posX = posX;
@@ -167,7 +168,11 @@ function relation(origin, target, relationLabel, relationId) {
         var newText = prompt("Enter labelText name", "labelText");
 
         if (newText) {
-            relationArr[relationId].label.attr({
+            var relation = relationArr.filter(function(rel){
+                return rel.relationId === relationId;
+            })[0];
+            
+            relation.label.attr({
                 text: newText
             })
         }
@@ -197,7 +202,7 @@ function addRelation(origin, target, labelText) {
     if (origin == undefined || target == undefined)
         console.log("You need to select two elements");
     else {
-        relationArr[relationArr.length] = new relation(origin, target, labelText, relationArr.length);
+        relationArr[relationArr.length] = new relation(origin, target, labelText, ++globalRelationId);
     }
 }
 
