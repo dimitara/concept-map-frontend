@@ -17,8 +17,8 @@
 (function () {
     'use strict';
 
-    var apiAdress = 'http://demo4500991.mockable.io/', //the address of the API server
-        currnetMap = {}, // object holding current loaded map
+    var apiAdress = '', //the address of the API server
+        currentMap = {}, // object holding current loaded map
         list = [];
     //generates and returns unuqie id for concept/relationship
     //objectlist should be either currentMap.concepts or currentMap.relationships 
@@ -34,26 +34,25 @@
         return maxId + 1;
     }
 
-    function loadMap(mapID) {
+    function loadMap(mapID, successCallback) {
         YUI().use("io-base", function (Y) {
-            var uri = apiAdress + 'maps/' + mapID;
+            var uri = apiAdress + '/data.php?id=' + mapID;
 
-            // Define a function to handle the response data.
-            function complete(id, o, args) {
-
+            // Define a function to handle the response data            
+            function success(id,o, args){
                 var data = o.responseText; // Response data.
-                currnetMap = JSON.parse(data).map;
+                currentMap = JSON.parse(data).map;
+                successCallback(currentMap);
             }
-
-            Y.on('io:complete', complete, Y, ['lorem', 'noMap']);
+            Y.on('io:success', success, Y, ['lorem', 'noMap']);
             var request = Y.io(uri);
         });
     }
 
     function addConcept(label, posx, posy) {
-        var id = generateID(currnetMap.concepts);
+        var id = generateID(currentMap['concepts']);
 
-        currnetMap.concepts.push({
+        currentMap.concepts.push({
             "label": label,
             "posx": posx,
             "posy": posy,
@@ -62,9 +61,9 @@
     }
 
     function addRelationship(label, source, target) {
-        var id = generateID(currnetMap.relationships);
+        var id = generateID(currentMap.relationships);
 
-        currnetMap.relationships.push({
+        currentMap.relationships.push({
             "label": label,
             "source": source,
             "target": target
@@ -73,12 +72,12 @@
 
     function updateConcept(id, label, posx, posy) {
         var i = 0,
-            length = currnetMap.concepts.length;
+            length = currentMap.concepts.length;
         for (; i < length; i += 1) {
-            if (currnetMap.concepts[i].id == id) {
-                currnetMap.concepts[i].label = label;
-                currnetMap.concepts[i].posx = posx;
-                currnetMap.concepts[i].posy = posy;
+            if (currentMap.concepts[i].id == id) {
+                currentMap.concepts[i].label = label;
+                currentMap.concepts[i].posx = posx;
+                currentMap.concepts[i].posy = posy;
             }
         }
 
@@ -86,12 +85,12 @@
 
     function updateRelationship(id, label, source, target) {
         var i = 0,
-            length = currnetMap.relationships.length;
+            length = currentMap.relationships.length;
         for (; i < length; i += 1) {
-            if (currnetMap.relationships[i].id == id) {
-                currnetMap.relationships[i].label = label;
-                currnetMap.relationships[i].source = source;
-                currnetMap.relationships[i].target = target;
+            if (currentMap.relationships[i].id == id) {
+                currentMap.relationships[i].label = label;
+                currentMap.relationships[i].source = source;
+                currentMap.relationships[i].target = target;
             }
         }
 
@@ -100,10 +99,10 @@
 
     function deleteConcept(id) {
         var i,
-            length = currnetMap.concepts.length;
+            length = currentMap.concepts.length;
         for (i = 0; i < length; i += 1) {
-            if (currnetMap.concepts[i].id == id) {
-                currnetMap.concepts.splice(i, 1);
+            if (currentMap.concepts[i].id == id) {
+                currentMap.concepts.splice(i, 1);
                 break;
             }
         }
@@ -111,10 +110,10 @@
 
     function deleteRelationship(id) {
         var i,
-            length = currnetMap.relationships.length;
+            length = currentMap.relationships.length;
         for (i = 0; i < length; i += 1) {
-            if (currnetMap.relationships[i].id == id) {
-                currnetMap.relationships.splice(i, 1);
+            if (currentMap.relationships[i].id == id) {
+                currentMap.relationships.splice(i, 1);
                 break;
             }
         }
@@ -122,14 +121,17 @@
 
     function createMap(title) {
         var requestResponse;
-        YUI().use('io-base', function (Y) {
-            var uri = apiAdress + "maps",
+        YUI().use('io-xdr', function (Y) {
+            var uri = apiAdress + "/data.php",
                 json = {
                     "title": title
                 },
                 cfg = {
+                    xdr: {
+                      use : 'native'  
+                    },
                     method: 'POST',
-                    data: Y.JSON.stringify(json),
+                    data: JSON.stringify(json),
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -140,19 +142,20 @@
                         }
                     }
                 };
+            Y.io.header("X-Requested-With");
             var request = Y.io(uri, cfg);
         });
 
-        currnetMap = JSON.parse(requestResponse).map;
+        currentMap = JSON.parse(requestResponse).map;
     }
 
     function saveMap() {
         var requestResponse;
         YUI().use('io-base', function (Y) {
-            var uri = apiAdress + "maps/" + currnetMap.id,
+            var uri = apiAdress + "/data.php?id=" + currentMap.id,
                 json = {
-                    "concepts": currnetMap.concepts,
-                    "relationships": currnetMap.relationships
+                    "concepts": currentMap.concepts,
+                    "relationships": currentMap.relationships
                 },
                 cfg = {
                     method: 'PUT',
@@ -174,7 +177,7 @@
     function deleteMap(id) {
         var requestResponse;
         YUI().use('io-base', function (Y) {
-            var uri = apiAdress + "maps/" + id,
+            var uri = apiAdress + "/data.php?id=" + id,
                 cfg = {
                     method: 'DELETE',
                     on: {
@@ -188,35 +191,33 @@
         });
     }
 
-    function mapsList() {
+    function mapsList(successCallback) {
         YUI().use("io-base", function (Y) {
-            var uri = apiAdress + '/maps';
+            var uri = apiAdress + '/data.php';
 
             // Define a function to handle the response data.
-            function complete(id, o, args) {
+            function success(id, o, args) {
 
                 var data = o.responseText; // Response data.
                 list = JSON.parse(data).mapsList;
+                successCallback(list);
 
             }
-
-            function success(id, o, args) {
-                return mapsList;
-            }
-            Y.on('io:complete', complete, Y, ['lorem', 'noList']);
+            
             Y.on('io:success', success, Y, ['lorem', 'noList']);
             var request = Y.io(uri);
         });
     }
     window.Map = {
-        save: saveMap,
+        createMap: createMap,
+        saveMap: saveMap,
         loadMapList: mapsList,
         deleteMap: deleteMap,
         loadMap: loadMap,
         currentMap: function () {
-            return currnetMap;
+            return currentMap;
         },
-        currnetList: function () {
+        currentList: function () {
             return list;
         },
         addRelationship: addRelationship,
