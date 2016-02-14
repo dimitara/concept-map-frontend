@@ -56,9 +56,18 @@ function concept(posX, posY, labelText, conceptId) {
     };
 
     function dblclicklabelText() {
-        conceptArr[conceptId].label.attr({
-            text: prompt("Enter labelText name", "labelText")
-        })
+        var newText = prompt("Enter Node name", conceptArr[conceptId].label.attr('text'));
+
+        if(newText){
+            conceptArr[conceptId].label.attr({
+                text: newText
+            });
+
+            var labelBBox = conceptArr[conceptId].label.getBBox();
+            
+            conceptArr[conceptId].node.attr({'width': labelBBox.width + 50});
+
+        }
     };
 
     this.group = paper.group();
@@ -68,7 +77,7 @@ function concept(posX, posY, labelText, conceptId) {
     });
 
     //NODE OBJECT
-    this.node = this.group.rect(posX, posY, 125, 50, 10).attr({
+    this.node = this.group.rect(posX, posY, 135, 50, 10).attr({
         'fill': NODE_BACKGROUND,
         'stroke': NODE_BACKGROUND,
         'stroke-width': LINE_WIDTH
@@ -107,9 +116,13 @@ function relation(origin, target, relationLabel, relationId) {
     //console.log(lineBBox..width - labelBBox.width);
 
     function dblclicklabelText() {
-        relationArr[relationId].label.attr({
-            text: prompt("Enter labelText name", "labelText")
-        })
+        var newText = prompt("Enter labelText name", "labelText");
+
+        if(newText){
+            relationArr[relationId].label.attr({
+                text: newText
+            })
+        }
     };
 }
 
