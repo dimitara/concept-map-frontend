@@ -173,12 +173,13 @@ function relation(origin, target, relationLabel, relationId) {
     //console.log(lineBBox..width - labelBBox.width);
 
     function dblclicklabelText() {
-        var newText = prompt("Enter labelText name", "labelText");
-
-        if (newText) {
-            var relation = relationArr.filter(function(rel){
+        var relation = relationArr.filter(function(rel){
                 return rel.relationId === relationId;
             })[0];
+		var newText = prompt("Enter labelText name", relation.label.attr('text'));
+			
+        if (newText) {
+           
 
             relation.label.attr({
                 text: newText
