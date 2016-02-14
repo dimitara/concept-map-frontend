@@ -43,12 +43,13 @@ function concept(posX, posY, labelText, conceptId) {
                     y1: oy
                 });
 
-                /*
+				
+                lineBBox = relationArr[i].line.getBBox();
                 relationArr[i].label.attr({
-                    x: tx,
-                    y: ty
+                    x: lineBBox.cx,
+                    y: lineBBox.cy
                 });
-                */
+                
             }
         }
 
@@ -58,13 +59,13 @@ function concept(posX, posY, labelText, conceptId) {
                     x2: ox,
                     y2: oy
                 });
-
-                /*
+                
+				lineBBox = relationArr[i].line.getBBox();
                 relationArr[i].label.attr({
-                    x: relationArr[i].line.getBBox().cx,
-                    y: relationArr[i].line.getBBox().cy
+                    x: lineBBox.cx,
+                    y: lineBBox.cy
                 });
-                */
+                
             }
         }
     }
@@ -249,7 +250,6 @@ function addRelation(origin, target, labelText) {
 		}
     }
 }
-
 function deleteConcept(conceptId) {
     var index = -1;
     for (var i = 0; i < conceptArr.length; i++) {
