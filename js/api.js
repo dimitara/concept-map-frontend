@@ -1,18 +1,4 @@
-//TODO: modify documentation about mapsList,
-//handle scenario where concept with relationships is deleted by deleting all related relationships
-//mapsList response Example:
-//{
-//    mapsList: [
-//        {
-//            title:"ababa",
-//            id: 1
-//        },
-//        {
-//            title:"second",
-//            id: 2
-//        }
-//    ]
-//}
+//TODO: handle scenario where concept with relationships is deleted by deleting all related relationships
 
 (function () {
     'use strict';
