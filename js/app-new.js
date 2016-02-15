@@ -214,7 +214,7 @@ function relation(origin, target, relationLabel, relationId) {
         })[0];
 		console.log(relation.line.getBBox());
 		relation.line.attr({
-			"stroke-opacity": 0.5
+			"stroke-opacity": 0.7
 		});
 	};
 	function relHoverOut (){
