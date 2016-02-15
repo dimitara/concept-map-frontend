@@ -163,6 +163,12 @@ function concept(posX, posY, labelText, conceptId) {
     this.label = this.group.text(posX + 25, posY + 28, labelText).attr({
         fill: "#ecf0f1"
     }).dblclick(dblclicklabelText);
+
+    var labelBBox = this.label.getBBox();
+
+    this.node.attr({
+        'width': labelBBox.width + 50
+    });
 }
 
 function relation(origin, target, relationLabel, relationId) {
@@ -193,7 +199,7 @@ function relation(origin, target, relationLabel, relationId) {
     }).dblclick(dblclickRelation).hover(relHoverIn,relHoverOut);
 
     var lineBBox = this.line.getBBox();
-    this.label = groupRelationships.text(lineBBox.cx + 4, lineBBox.cy - 4, "new relation").dblclick(dblclicklabelText);
+    this.label = groupRelationships.text(lineBBox.cx + 4, lineBBox.cy - 4, relationLabel ? relationLabel : "new relation").dblclick(dblclicklabelText);
     var labelBBox = this.label.getBBox();
 	this.label.attr({x: lineBBox.cx - labelBBox.w/2});
     function dblclicklabelText() {
@@ -356,13 +362,28 @@ function save(){
         });
     });
 
-    Map.saveMap({
+    var currentMap = {
         id: id,
         concepts: concepts,
         relationships: relationships
+    };
+
+    console.log(JSON.stringify(currentMap));
+
+    Map.saveMap(currentMap);
+}
+
+
+function deserialize(json){
+    id = json.id;
+
+    json.concepts.forEach(function(c){
+        conceptArr.push(new concept(c.posx, c.posy, c.label, c.id));
+    });
+
+    json.relationships.forEach(function(r){
+        relationArr.push(new relation(r.origin, r.target, r.label, r.id));
     });
 }
 
-addNode();
-addNode();
-addRelation(1,2);
+deserialize({"id":"1","concepts":[{"id":1,"label":"Activities","posx":337,"posy":247},{"id":2,"label":"Implementation","posx":446,"posy":24},{"id":3,"label":"Quality Assurance","posx":167,"posy":33},{"id":4,"label":"Project management","posx":525,"posy":397},{"id":5,"label":"Business analysis","posx":32,"posy":250},{"id":6,"label":"Requirements specification","posx":10,"posy":370},{"id":7,"label":"Deployment","posx":3,"posy":99}],"relationships":[{"id":1,"label":"construction","origin":1,"target":2},{"id":2,"label":"all","origin":4,"target":1},{"id":3,"label":"construction","origin":3,"target":1},{"id":4,"label":"elaboration","origin":5,"target":1},{"id":5,"label":"elaboration","origin":6,"target":1},{"id":6,"label":"construction","origin":7,"target":1}]});
