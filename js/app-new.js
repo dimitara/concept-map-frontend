@@ -46,8 +46,8 @@ function concept(posX, posY, labelText, conceptId) {
 				
                 lineBBox = relationArr[i].line.getBBox();
                 relationArr[i].label.attr({
-                    x: lineBBox.cx,
-                    y: lineBBox.cy
+                    x: lineBBox.cx + 4,
+                    y: lineBBox.cy - 4
                 });
                 
             }
@@ -62,8 +62,8 @@ function concept(posX, posY, labelText, conceptId) {
                 
 				lineBBox = relationArr[i].line.getBBox();
                 relationArr[i].label.attr({
-                    x: lineBBox.cx,
-                    y: lineBBox.cy
+                    x: lineBBox.cx + 4,
+                    y: lineBBox.cy - 4
                 });
                 
             }
@@ -170,7 +170,7 @@ function relation(origin, target, relationLabel, relationId) {
     }).dblclick(dblclickRelation);
 
     var lineBBox = this.line.getBBox();
-    this.label = groupRelationships.text(lineBBox.cx, lineBBox.cy - 4, "new relation").dblclick(dblclicklabelText);
+    this.label = groupRelationships.text(lineBBox.cx + 4, lineBBox.cy - 4, "new relation").dblclick(dblclicklabelText);
     var labelBBox = this.label.getBBox();
     //console.log(lineBBox..width - labelBBox.width);
 
