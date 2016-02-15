@@ -1,3 +1,9 @@
+*{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
 .left-bar{
     width:100px;
     height:100%;

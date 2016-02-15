@@ -33,7 +33,7 @@ function concept(posX, posY, labelText, conceptId) {
 
     var move = function(dx, dy) {
 		var nodeBBox = this.parent().getBBox();
-		console.log(nodeBBox);
+		
 		if(nodeBBox.x + dx > 0 && nodeBBox.x + dx < canvasWidth && nodeBBox.y + dy > 0 && nodeBBox.y + dy < canvasHeight){
 			this.parent().attr({
 				transform: this.parent().data('origTransform') + (this.parent().data('origTransform') ? "T" : "t") + [dx, dy]
@@ -321,7 +321,7 @@ function deleteConcept(conceptId) {
                 relationArr[i].line.remove();
                 relationArr[i].label.remove();
                 relationArr.splice(i, 1);
-                console.log("Concept Deleted");
+                
                 i--;
             }
         }
@@ -342,7 +342,6 @@ function deleteRelation(relationId) {
 		relationArr[index].line.remove();
         relationArr.splice(index, 1);
 		selRelation = undefined;
-		console.log("Relation Removed")
     }
 };
 
@@ -374,8 +373,6 @@ function save(){
         concepts: concepts,
         relationships: relationships
     };
-
-    console.log(JSON.stringify(currentMap));
 
     Map.saveMap(currentMap);
 }
