@@ -169,7 +169,7 @@ function relation(origin, target, relationLabel, relationId) {
     this.line = groupRelationships.line(ox, oy, tx, ty).attr({
         stroke: "#34495e",
         strokeWidth: LINE_WIDTH
-    }).dblclick(dblclickRelation);
+    }).dblclick(dblclickRelation).hover(relHoverIn,relHoverOut);
 
     var lineBBox = this.line.getBBox();
     this.label = groupRelationships.text(lineBBox.cx + 4, lineBBox.cy - 4, "new relation").dblclick(dblclicklabelText);
@@ -205,9 +205,25 @@ function relation(origin, target, relationLabel, relationId) {
 				stroke: NODE_BACKGROUND
 			});				
 		}
-			
-			
 
+	};
+	
+	function relHoverIn (){
+		var relation = relationArr.filter(function(rel){
+			return rel.relationId === relationId;
+        })[0];
+		console.log(relation.line.getBBox());
+		relation.line.attr({
+			"stroke-opacity": 0.7
+		});
+	};
+	function relHoverOut (){
+		var relation = relationArr.filter(function(rel){
+			return rel.relationId === relationId;
+        })[0];
+		this.attr({
+			"stroke-opacity": 1
+		});
 	};
 }
 
