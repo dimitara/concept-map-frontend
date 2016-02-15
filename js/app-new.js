@@ -21,6 +21,9 @@ var relationArr = [];
 var groupRelationships = paper.group({id: 'rels'});
 var groupNodes = paper.group({id: 'nodes'});
 
+var canvasWidth = document.getElementById("canvas").width.animVal.value;
+var canvasHeight = document.getElementById("canvas").height.animVal.value;
+
 function concept(posX, posY, labelText, conceptId) {
     this.posX = posX;
     this.posY = posY;
@@ -29,48 +32,52 @@ function concept(posX, posY, labelText, conceptId) {
     //DRAG FUNCTIONS
 
     var move = function(dx, dy) {
-        this.parent().attr({
-            transform: this.parent().data('origTransform') + (this.parent().data('origTransform') ? "T" : "t") + [dx, dy]
-        });
+		var nodeBBox = this.parent().getBBox();
+		console.log(nodeBBox);
+		if(nodeBBox.x + dx > 0 && nodeBBox.x + dx < canvasWidth && nodeBBox.y + dy > 0 && nodeBBox.y + dy < canvasHeight){
+			this.parent().attr({
+				transform: this.parent().data('origTransform') + (this.parent().data('origTransform') ? "T" : "t") + [dx, dy]
+			});
 
-        var originBBox = this.getBBox();
-        var ox = this.parent().getBBox().x + originBBox.width / 2;
-        var oy = this.parent().getBBox().y + originBBox.height / 2;
+			var originBBox = this.getBBox();
+			var ox = this.parent().getBBox().x + originBBox.width / 2;
+			var oy = this.parent().getBBox().y + originBBox.height / 2;
 
-        for (var i = 0; i < relationArr.length; i++) {
-            if (relationArr[i].origin === conceptId) {
-                relationArr[i].line.attr({
-                    x1: ox,
-                    y1: oy
-                });
+			for (var i = 0; i < relationArr.length; i++) {
+				if (relationArr[i].origin === conceptId) {
+					relationArr[i].line.attr({
+						x1: ox,
+						y1: oy
+					});
 
-				
-                lineBBox = relationArr[i].line.getBBox();
-				labelBBox = relationArr[i].label.getBBox();
-                relationArr[i].label.attr({
-                    x: lineBBox.cx - labelBBox.w/2,
-                    y: lineBBox.cy - 4
-                });
-                
-            }
-        }
+					
+					lineBBox = relationArr[i].line.getBBox();
+					labelBBox = relationArr[i].label.getBBox();
+					relationArr[i].label.attr({
+						x: lineBBox.cx - labelBBox.w/2,
+						y: lineBBox.cy - 4
+					});
+					
+				}
+			}
 
-        for (var i = 0; i < relationArr.length; i++) {
-            if (relationArr[i].target == conceptId) {
-                relationArr[i].line.attr({
-                    x2: ox,
-                    y2: oy
-                });
-                
-				lineBBox = relationArr[i].line.getBBox();
-				labelBBox = relationArr[i].label.getBBox();
-                relationArr[i].label.attr({
-                    x: lineBBox.cx - labelBBox.w/2,
-                    y: lineBBox.cy - 4
-                });
-                
-            }
-        }
+			for (var i = 0; i < relationArr.length; i++) {
+				if (relationArr[i].target == conceptId) {
+					relationArr[i].line.attr({
+						x2: ox,
+						y2: oy
+					});
+					
+					lineBBox = relationArr[i].line.getBBox();
+					labelBBox = relationArr[i].label.getBBox();
+					relationArr[i].label.attr({
+						x: lineBBox.cx - labelBBox.w/2,
+						y: lineBBox.cy - 4
+					});
+					
+				}
+			}
+		}
     }
 
     var start = function() {
