@@ -125,6 +125,26 @@ function concept(posX, posY, labelText, conceptId) {
             });
         }
     };
+	
+	function nodeHoverIn(){
+        var node = conceptArr.filter(function(concept){
+            return concept.conceptId === conceptId;
+        })[0];		
+		node.node.attr({
+			"fill-opacity": 0.7,
+			"stroke-opacity": 0.7
+		});
+	};
+	
+	function nodeHoverOut(){
+        var node = conceptArr.filter(function(concept){
+            return concept.conceptId === conceptId;
+        })[0];
+		node.node.attr({
+			"fill-opacity": 1,
+			"stroke-opacity": 1
+		});
+	};
 
     this.group = groupNodes.group();
     this.group.attr({
@@ -137,7 +157,7 @@ function concept(posX, posY, labelText, conceptId) {
         'fill': NODE_BACKGROUND,
         'stroke': NODE_BACKGROUND,
         'stroke-width': LINE_WIDTH
-    }).drag(move, start).dblclick(dblclickNode);
+    }).drag(move, start).dblclick(dblclickNode).hover(nodeHoverIn,nodeHoverOut);
 
     //LABEL OBJECT
     this.label = this.group.text(posX + 25, posY + 28, labelText).attr({
@@ -213,8 +233,8 @@ function relation(origin, target, relationLabel, relationId) {
 		var relation = relationArr.filter(function(rel){
 			return rel.relationId === relationId;
         })[0];
-		console.log(relation.line.getBBox());
 		relation.line.attr({
+			strokeWidth: 6,
 			"stroke-opacity": 0.7
 		});
 	};
@@ -223,6 +243,7 @@ function relation(origin, target, relationLabel, relationId) {
 			return rel.relationId === relationId;
         })[0];
 		this.attr({
+			strokeWidth: LINE_WIDTH,
 			"stroke-opacity": 1
 		});
 	};
