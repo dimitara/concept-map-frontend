@@ -232,9 +232,8 @@ function relation(origin, target, relationLabel, relationId) {
 		var relation = relationArr.filter(function(rel){
 			return rel.relationId === relationId;
         })[0];
-		console.log(relation.line.getBBox());
 		relation.line.attr({
-			strokeWidth: 5,
+			strokeWidth: 6,
 			"stroke-opacity": 0.7
 		});
 	};
