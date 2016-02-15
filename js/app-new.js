@@ -1,5 +1,6 @@
 var paper = Snap("#canvas");
 
+var id = '';
 var LINE_WIDTH = 3;
 var NODE_BACKGROUND = "#2c3e50";
 var NODE_STROKE_SELECTED = "#0F9923";
@@ -308,31 +309,37 @@ function deleteRelation(relationId) {
         relationArr.splice(index, 1);
 		selRelation = undefined;
 		console.log("Relation Removed")
-
-
     }
 };
 
 function save(){
     var concepts = [];
     var relationships = [];
-    console.log(conceptArr);
-    console.log(relationArr);
 
     conceptArr.forEach(function(c){
         var bbox = c.group.getBBox();
         concepts.push({
+            id: c.conceptId,
             label: c.label.node.innerHTML,
             posx: bbox.x,
             posy: bbox.y
         });
     });
 
-    console.log(concepts);
+    relationArr.forEach(function(r){
+        relationships.push({
+            id: r.relationId,
+            label: r.label.node.innerHTML,
+            origin: r.origin,
+            target: r.target
+        });
+    });
 
-    //currentMap.concepts[i].label = label;
-    //currentMap.concepts[i].posx = posx;
-    //currentMap.concepts[i].posy = posy;
+    Map.saveMap({
+        id: id,
+        concepts: concepts,
+        relationships: relationships
+    });
 }
 
 addNode();
