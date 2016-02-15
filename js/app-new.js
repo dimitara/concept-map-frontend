@@ -297,6 +297,28 @@ function deleteRelation(relationId) {
     }
 };
 
+function save(){
+    var concepts = [];
+    var relationships = [];
+    console.log(conceptArr);
+    console.log(relationArr);
+
+    conceptArr.forEach(function(c){
+        var bbox = c.group.getBBox();
+        concepts.push({
+            label: c.label.node.innerHTML,
+            posx: bbox.x,
+            posy: bbox.y
+        });
+    });
+
+    console.log(concepts);
+
+    //currentMap.concepts[i].label = label;
+    //currentMap.concepts[i].posx = posx;
+    //currentMap.concepts[i].posy = posy;
+}
+
 addNode();
 addNode();
 addRelation(1,2);
