@@ -6,10 +6,12 @@
         this.conceptId = conceptId;
         //DRAG FUNCTIONS
 
-        var move = function(dx, dy) {
+        var move = function(dx, dy, absx, absy) {
             var nodeBBox = this.parent().getBBox();
+            console.log(absx);
+            if(absx < 20) return ;
+            if(absx > canvasWidth - 20) return ;
 
-            
             this.parent().attr({
                 transform: this.parent().data('origTransform') + (this.parent().data('origTransform') ? "T" : "t") + [dx, dy]
             });
@@ -77,12 +79,12 @@
             } else if (selConOne == conceptId) {
                 setSelectionOne(undefined);
                 this.attr({
-                    stroke: NODE_BACKGROUND,
+                    stroke: STROKE_COLOR,
                 });
             } else if (selConTwo == conceptId) {
                 setSelectionTwo(undefined);
                 this.attr({
-                    stroke: NODE_BACKGROUND
+                    stroke: STROKE_COLOR
                 });
             }
         };

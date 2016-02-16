@@ -67,13 +67,13 @@ function addRelation(origin, target, labelText) {
 		for (var i = 0; i < conceptArr.length; i++){
 			if (conceptArr[i].conceptId === origin){
 				conceptArr[i].node.attr({
-					stroke: NODE_BACKGROUND
+					stroke: STROKE_COLOR
 				});
 				selConOne = undefined;
 			}
 			else if(conceptArr[i].conceptId === target){}{
 				conceptArr[i].node.attr({
-					stroke: NODE_BACKGROUND
+					stroke: STROKE_COLOR
 					
 				});
 				selConTwo = undefined;
