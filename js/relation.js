@@ -53,7 +53,7 @@
                 return rel.relationId === relationId;
             })[0];
 
-            if (selRelation === undefined) {
+            if (!selRelation) {
                 setRelSelection(relationId);
                 relation.line.attr({
                     stroke: NODE_STROKE_SELECTED

@@ -23,9 +23,9 @@
         window.globalConceptId = 0;
         window.globalRelationId = 0;
 
-        window.selConOne;
-        window.selConTwo;
-        window.selRelation
+        window.selConOne = null;
+        window.selConTwo = null;
+        window.selRelation = null;
         window.conceptArr = [];
         window.relationArr = [];
 
