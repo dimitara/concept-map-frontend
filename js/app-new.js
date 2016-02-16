@@ -383,10 +383,12 @@ function deserialize(json){
 
     json.concepts.forEach(function(c){
         conceptArr.push(new concept(c.posx, c.posy, c.label, c.id));
+		globalConceptId++;
     });
 
     json.relationships.forEach(function(r){
         relationArr.push(new relation(r.origin, r.target, r.label, r.id));
+		globalRelationId++;
     });
 }
 
