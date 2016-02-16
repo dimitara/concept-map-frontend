@@ -52,9 +52,13 @@ function concept(posX, posY, labelText, conceptId) {
 					
 					lineBBox = relationArr[i].line.getBBox();
 					labelBBox = relationArr[i].label.getBBox();
+					var deltaX = lineBBox.x2 - lineBBox.x;
+					var deltaY = lineBBox.y2 - lineBBox.y;
+					var deg = Math.atan2(deltaY, deltaX)*180.0/Math.PI;
 					relationArr[i].label.attr({
 						x: lineBBox.cx - labelBBox.w/2,
-						y: lineBBox.cy - 4
+						y: lineBBox.cy - 4,
+						transform: "r" + deg
 					});
 					
 				}
@@ -69,9 +73,13 @@ function concept(posX, posY, labelText, conceptId) {
 					
 					lineBBox = relationArr[i].line.getBBox();
 					labelBBox = relationArr[i].label.getBBox();
+					var deltaX = lineBBox.x2 - lineBBox.x;
+					var deltaY = lineBBox.y2 - lineBBox.y;
+					var deg = Math.atan2(deltaY, deltaX)*180.0/Math.PI;
 					relationArr[i].label.attr({
 						x: lineBBox.cx - labelBBox.w/2,
-						y: lineBBox.cy - 4
+						y: lineBBox.cy - 4,
+						transform: "r" + deg
 					});
 					
 				}
@@ -210,7 +218,14 @@ function relation(origin, target, relationLabel, relationId) {
             })
         }
     };
-	
+	var deltaX = lineBBox.x2 - lineBBox.x;
+	var deltaY = lineBBox.y2 - lineBBox.y;
+	var deg = Math.atan2(deltaY, deltaX)*180.0/Math.PI;
+	this.label.attr({
+		x: lineBBox.cx - labelBBox.w/2,
+		y: lineBBox.cy - 4,
+		transform: "r" + deg
+	});
 	function dblclickRelation (){
 		var relation = relationArr.filter(function(rel){
 			return rel.relationId === relationId;
