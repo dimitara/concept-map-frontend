@@ -19,6 +19,11 @@
 
 > Returns current map.
 
+####loadMap(id, successCallback);
+
+> Loads a map
+> id - the id of the map you want to load
+> successCallback - function that will be executed after successful map retrieving.
 ####addRelationship(label, source, target);
 
 > Adds a relationship to the map.
