@@ -13,8 +13,7 @@ var globalConceptId = 0;
 var globalRelationId = 0;
 
 var selConOne;
-var selConTwo;
-var selRelation
+
 var conceptArr = [];
 var relationArr = [];
 
@@ -86,29 +85,18 @@ function concept(posX, posY, labelText, conceptId) {
 
     //DOUBLE CLICK FUNCTIONS
     function dblclickNode() {
-        if (selConOne == undefined && selConTwo != conceptId) {
+        if (selConOne == undefined) {
             setSelectionOne(conceptId);
             this.attr({
                 fill: NODE_BACKGROUND,
                 stroke: NODE_STROKE_SELECTED
             });
-        } else if (selConTwo == undefined && selConOne != conceptId) {
-            setSelectionTwo(conceptId);
-            this.attr({
-                fill: NODE_BACKGROUND
-            });
-            this.attr({
-                stroke: NODE_STROKE_SELECTED
-            });
+        } else if (selConOne != undefined && selConOne != conceptId) {
+			addRelation(selConOne, conceptId);
         } else if (selConOne == conceptId) {
             setSelectionOne(undefined);
             this.attr({
                 stroke: NODE_BACKGROUND,
-            });
-        } else if (selConTwo == conceptId) {
-            setSelectionTwo(undefined);
-            this.attr({
-                stroke: NODE_BACKGROUND
             });
         }
     };
@@ -222,23 +210,12 @@ function relation(origin, target, relationLabel, relationId) {
             })
         }
     };
-	
+
 	function dblclickRelation (){
 		var relation = relationArr.filter(function(rel){
 			return rel.relationId === relationId;
         })[0];
-		if (selRelation === undefined){
-			setRelSelection(relationId);
-			relation.line.attr({
-				stroke: NODE_STROKE_SELECTED
-			})
-		}
-		else if (selRelation === relationId){
-			setRelSelection(undefined);
-			relation.line.attr({
-				stroke: NODE_BACKGROUND
-			});				
-		}
+		deleteRelation(relationId);
 
 	};
 	
@@ -266,13 +243,6 @@ function setSelectionOne(value) {
     selConOne = value;
 };
 
-function setSelectionTwo(value) {
-    selConTwo = value;
-};
-
-function setRelSelection(value) {
-	selRelation = value;
-}
 function addNode(posX, posY, labelText) {
     if (labelText == undefined) labelText = "New Concept";
     if (posX == undefined) posX = 100;
@@ -291,13 +261,6 @@ function addRelation(origin, target, labelText) {
 					stroke: NODE_BACKGROUND
 				});
 				selConOne = undefined;
-			}
-			else if(conceptArr[i].conceptId === target){}{
-				conceptArr[i].node.attr({
-					stroke: NODE_BACKGROUND
-					
-				});
-				selConTwo = undefined;
 			}
 		}
     }
@@ -341,7 +304,6 @@ function deleteRelation(relationId) {
 		relationArr[index].label.remove();
 		relationArr[index].line.remove();
         relationArr.splice(index, 1);
-		selRelation = undefined;
     }
 };
 
