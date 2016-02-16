@@ -1,7 +1,7 @@
 (function() {
     function concept(posX, posY, labelText, conceptId) {
-        this.posX = posX;
-        this.posY = posY;
+        this.posX = parseFloat(posX);
+        this.posY = parseFloat(posY);
         this.labelText = labelText;
         this.conceptId = conceptId;
         //DRAG FUNCTIONS
@@ -139,14 +139,14 @@
         });
 
         //NODE OBJECT
-        this.node = this.group.rect(posX, posY, 135, 50, 10).attr({
+        this.node = this.group.rect(this.posX, this.posY, 135, 50, 10).attr({
             'fill': NODE_BACKGROUND,
             'stroke': STROKE_COLOR,
             'stroke-width': LINE_WIDTH
         }).drag(move, start).dblclick(dblclickNode).hover(nodeHoverIn, nodeHoverOut);
 
         //LABEL OBJECT
-        this.label = this.group.text(posX + 25, posY + 28, labelText).attr({
+        this.label = this.group.text(this.posX + 25, this.posY + 28, labelText).attr({
             fill: STROKE_COLOR
         }).dblclick(dblclicklabelText);
 

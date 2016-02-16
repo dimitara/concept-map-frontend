@@ -1,154 +1,207 @@
-var paper = Snap("#canvas");
+(function(){
+    window.onload = function(){
+        setTimeout(function(){
+            load();
+        }, 300);
+    };
 
-function concept (posX, posY, labelText, conceptId){
-		this.posX = posX;
-		this.posY = posY;
-		this.labelText = labelText;
-		this.relationSource = [];
-		this.relationTarget = [];
-		this.conceptId = conceptId;
-		//DRAG FUNCTIONS
-		var move = function(dx,dy) {
-				this.attr({
-							transform: this.data('origTransform') + (this.data('origTransform') ? "T" : "t") + [dx, dy]
-						});
-				nodeBBox[conceptId] = this.getBBox();
-				label.attr({
-					x: nodeBBox[conceptId].x+25,
-					y: nodeBBox[conceptId].y+28
-				});
-				//RELATION LINE AND LABEL DRAG
-				for (var i = 0; i < relationArr.length; i++) {
-					if (relationArr[i].origin == conceptId){
-						relationArr[i].line.attr({
-							x1: nodeBBox[conceptId].cx,
-							y1: nodeBBox[conceptId].cy
-						});
-						lineBBox[i] = relationArr[i].line.getBBox();
-						relationArr[i].label.attr({
-							x: lineBBox[i].cx,
-							y: lineBBox[i].cy
-							
-						});
-						console.log(nodeBBox[conceptId].cx);
-						console.log(nodeBBox[conceptId].cy);
-					}
-				}
-				
-				for (var i = 0; i < relationArr.length; i++) {
-					if (relationArr[i].target == conceptId){
-						relationArr[i].line.attr({
-							x2: nodeBBox[conceptId].cx,
-							y2: nodeBBox[conceptId].cy
-						});
-						lineBBox[i] = relationArr[i].line.getBBox();
-						relationArr[i].label.attr({
-							x: lineBBox[i].cx,
-							y: lineBBox[i].cy
-							
-						});
-						console.log(nodeBBox[conceptId].cx);
-						console.log(nodeBBox[conceptId].cy);
-					}
-				}
-				
-		}
+    function load(){
+        window.paper = Snap("#canvas");
 
-		var start = function() {
-				this.data('origTransform', this.transform().local );
-				
-		}
-		stop = function() {
-				console.log('finished dragging');
-				console.log(node.getBBox());
-		}
-		//DOUBLE CLICK FUNCTIONS
-		function dblclickNode() {
-			if (selConOne == undefined && selConTwo != conceptId){
-				setSelectionOne(conceptId);
-				console.log(selConOne);
-				console.log(selConTwo);
-			}
-			else if (selConTwo == undefined && selConOne != conceptId) {
-				setSelectionTwo(conceptId);
-				console.log(selConOne);
-				console.log(selConTwo);
-			}
-			else if (selConOne == conceptId){
-				setSelectionOne(undefined);
-			}
-			else if (selConTwo == conceptId){
-				setSelectionTwo(undefined);
-			}
-		};
-		
-		function dblclicklabelText() {
-			label.attr({
-				text: prompt("Enter labelText name", "labelText")
-			})
-		};
-		
-		//NODE OBJECT
-		var node = paper.rect(posX, posY, 125, 50).attr({
-			fill: "#34495e"
-		})
-		.drag(move, start, stop)
-		.dblclick(dblclickNode);
-		nodeBBox[conceptId] = node.getBBox();
+        window.id = '';
+        window.LINE_WIDTH = 3;
+        window.NODE_BACKGROUND = "#fff";
+        window.NODE_STROKE_SELECTED = "#60B2A4";
+        window.STROKE_COLOR = "#15305D";
+        window.HOVER_COLOR = "#CCD5D9";
 
-		
-		//LABEL OBJECT
-		var label = paper.text (posX+25, posY+28, labelText).attr({
-			fill: "#ecf0f1"
-		})
-		.dblclick(dblclicklabelText);
-		
-}
+        window.nodeDefaultX1 = 100;
+        window.nodeDefaultY1 = 100;
+        window.nodeDefaultX2 = 100;
+        window.nodeDefaultY2 = 50;
 
-function relation (origin, target, relationLabel, relationId) {
-	this.origin = origin;
-	this.target = target;
-	this.relationId = relationId;
-	this.relationLabel = relationLabel;
-	this.line = paper.line(nodeBBox[origin].cx, nodeBBox[origin].cy, nodeBBox[target].cx, nodeBBox[target].cy).attr({
-		stroke: "#000"
-	});
-	lineBBox[relationId] = this.line.getBBox();
-	this.label = paper.text(lineBBox[relationId].cx, lineBBox[relationId].cy, "Hello").dblclick(dblclicklabelText);
-	
-	function dblclicklabelText() {
-		relationArr[relationId].label.attr({
-			text: prompt("Enter labelText name", "labelText")
-		})
-	};
-}
+        window.globalConceptId = 0;
+        window.globalRelationId = 0;
+
+        window.selConOne = null;
+        window.selConTwo = null;
+        window.selRelation = null;
+        window.conceptArr = [];
+        window.relationArr = [];
+
+        window.groupRelationships = paper.group({id: 'rels'});
+        window.groupNodes = paper.group({id: 'nodes'});
+
+        window.canvasWidth = document.getElementById("canvas").width.animVal.value;
+        window.canvasHeight = document.getElementById("canvas").height.animVal.value;
+        window.canvasY = document.getElementById("canvas").y.animVal.value;
+
+        window.setSelectionOne = function(value) {
+            selConOne = value;
+        };
+
+        window.setSelectionTwo = function(value) {
+            selConTwo = value;
+        };
+
+        window.setRelSelection = function(value) {
+            selRelation = value;
+        }
+        window.addNode = function(posX, posY, labelText) {
+            if (labelText == undefined) labelText = "New Concept";
+            if (posX == undefined) posX = 10 + conceptArr.length*2;
+            if (posY == undefined) posY = 10 + conceptArr.length*2;
+
+            conceptArr[conceptArr.length] = new concept(posX, posY, labelText, ++globalConceptId);
+        }
+
+        window.deleteSelected = function(){
+            if(selConOne){
+                deleteConcept(selConOne);
+            }
+
+            if(selConTwo){
+                deleteConcept(selConTwo);
+            }
+
+            if(selRelation){
+                deleteRelation(selRelation);
+            }
+
+            selConOne = undefined;
+            selConTwo = undefined;
+            selRelation = undefined;
+        }
+
+        window.addRelation = function(origin, target, labelText) {
+            origin = origin || selConOne; 
+            target = target || selConTwo;
+
+            if (origin == undefined || target == undefined)
+                alert("Select two concepts to create a relation");
+            else {
+                relationArr[relationArr.length] = new relation(origin, target, labelText, ++globalRelationId);
+                for (var i = 0; i < conceptArr.length; i++){
+                    if (conceptArr[i].conceptId === origin){
+                        conceptArr[i].node.attr({
+                            stroke: STROKE_COLOR
+                        });
+                        selConOne = undefined;
+                    }
+                    else if(conceptArr[i].conceptId === target){}{
+                        conceptArr[i].node.attr({
+                            stroke: STROKE_COLOR
+                            
+                        });
+                        selConTwo = undefined;
+                    }
+                }
+            }
+        }
+        window.deleteConcept = function(conceptId) {
+            var index = -1;
+            for (var i = 0; i < conceptArr.length; i++) {
+                if (conceptArr[i].conceptId === conceptId) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index > -1) {
+                conceptArr[index].group.remove();
+                conceptArr.splice(index, 1);
+                selConOne = undefined;
+
+                for (var i = 0; i < relationArr.length; i++) {
+                    if (relationArr[i].origin == conceptId || relationArr[i].target == conceptId) {
+                        relationArr[i].line.remove();
+                        relationArr[i].label.remove();
+                        relationArr.splice(i, 1);
+                        
+                        i--;
+                    }
+                }
+            }
+        };
+
+        function deleteRelation(relationId) {
+            var index = -1;
+            for (var i = 0; i < relationArr.length; i++) {
+                if (relationArr[i].relationId === relationId) {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index > -1) {
+                relationArr[index].label.remove();
+                relationArr[index].line.remove();
+                relationArr.splice(index, 1);
+                selRelation = undefined;
+            }
+        };
 
 
-function setSelectionOne(value){
-	selConOne = value;
-};
-function setSelectionTwo(value){
-	selConTwo = value;
-};
-var selConOne;
-var selConTwo;
-var nodeBBox = [];
-var lineBBox = [];
-var conceptArr = [];
-var relationArr = [];
 
-function addNode (posX, posY, labelText){
-	if (labelText == undefined)
-		labelText = "New Concept";
-	conceptArr[conceptArr.length] = new concept (posX, posY, labelText, conceptArr.length);
-}
-function addRelation (origin, target, labelText){
-	if (origin == undefined || target == undefined)
-		console.log("You need to select two elements");
-	else {
-		console.log("success");
-		relationArr[relationArr.length] = new relation(origin, target, labelText, relationArr.length);
-		conceptArr[origin].relationSource[conceptArr[origin].relationSource.length] = relationArr.length-1;
-		conceptArr[target].relationTarget[conceptArr[target].relationTarget.length] = relationArr.length-1;
-	}
-}
+        window.save = function(){
+            var concepts = [];
+            var relationships = [];
+
+            conceptArr.forEach(function(c){
+                var bbox = c.group.getBBox();
+                concepts.push({
+                    id: c.conceptId,
+                    label: c.label.node.innerHTML,
+                    posx: bbox.x,
+                    posy: bbox.y
+                });
+            });
+
+            relationArr.forEach(function(r){
+                relationships.push({
+                    id: r.relationId,
+                    label: r.label.node.innerHTML,
+                    origin: r.origin,
+                    target: r.target
+                });
+            });
+
+            var currentMap = {
+                id: id,
+                concepts: concepts,
+                relationships: relationships
+            };
+
+            Map.saveMap(currentMap);
+        }
+
+
+        function deserialize(json){
+            json.id = id;
+            json.concepts.forEach(function(c){
+                conceptArr.push(new concept(c.posx, c.posy, c.label, c.id));
+                globalConceptId++;
+            });
+
+            json.relationships.forEach(function(r){
+                relationArr.push(new relation(r.origin, r.target, r.label, r.id));
+                globalRelationId++;
+            });
+        }
+
+        var params = location.search.replace('?', '');
+        params = params.split('&');
+        
+        params.forEach(function(p){
+            if(p.indexOf('id') > -1){
+                id = p.replace('id=', '');
+            }
+        });
+
+        if(id){
+            Map.loadMap(id, function(data){
+                deserialize(data);
+            });
+        }
+    }
+}());
