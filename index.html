@@ -6,10 +6,9 @@
     <body>
         <div class="main">
             <div class="top-bar">
-                <button onclick="addNode(100, 100)">Add Concept</button>
+                <button onclick="addNode()">Add Concept</button>
                 <button onclick="addRelation(selConOne, selConTwo)">Add Relation</button>
-                <button onclick="deleteConcept(selConOne)">Delete Concept</button>
-				<button onclick="deleteRelation(selRelation)">Delete Relation</button>
+                <button onclick="deleteSelected()">Delete</button>
 
                 <button onclick="save()">Save</button>
             </div>
@@ -20,6 +19,9 @@
 
         <script src="js/api.js"></script>
         <script src="js/snap.svg-min.js"></script>
+
+        <script src="js/concept.js"></script>
+        <script src="js/relation.js"></script>
         <script src="js/app-new.js"></script>
     </body>
 </html>
