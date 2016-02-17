@@ -3,7 +3,7 @@
 (function () {
     'use strict';
 
-    var apiAdress = '', //the address of the API server
+    var apiAdress = '/moodle29/mod/conceptmap', //the address of the API server
         currentMap = {}, // object holding current loaded map
         list = [];
     //generates and returns unuqie id for concept/relationship

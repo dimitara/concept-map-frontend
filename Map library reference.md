@@ -1,8 +1,13 @@
 #Map library reference
+
+###Configuration:
+var apiAdress - the address of the REST API
+
 ###List of methods:
  - saveMap();
  - currentMap();
- - loadMap(id, successCallback);
+ - deleteMap(id);
+ - loadMap(id, successCallback(map));
  - addRelationship(label, source, target);
  - deleteRelationship(id);
  - updateRelationship(id, lable, source, target);
@@ -19,11 +24,12 @@
 
 > Returns current map.
 
-####loadMap(id, successCallback);
+####loadMap(id, successCallback(map));
 
 > Loads a map
 > id - the id of the map you want to load
-> successCallback - function that will be executed after successful map retrieving.
+> successCallback(map) - function that will be executed after successful map retrieving. Takes the map retrieved as an argument. 
+
 ####addRelationship(label, source, target);
 
 > Adds a relationship to the map.
