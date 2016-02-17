@@ -5,22 +5,32 @@
     </head>
     <body>
         <div class="main">
+<<<<<<< HEAD
             <div><h1>Concept map for Moodle</h1></div>
             <div class="left-bar">
                 <button onclick="addNode(100, 100)">Add Concept</button>
 				<!-- <button onclick="addRelation(selConOne, selConTwo)">Add Relation</button> -->
 				<button onclick="deleteConcept(selConOne)">Delete Concept</button>
 				<!--<button onclick="deleteRelation(selRelation)">Delete Relation</button> -->
+=======
+            <div class="top-bar">
+                <button onclick="addNode()">Add Concept</button>
+                <button onclick="addRelation(selConOne, selConTwo)">Add Relation</button>
+                <button onclick="deleteSelected()">Delete</button>
+>>>>>>> origin/master
 
                 <button onclick="save()">Save</button>
             </div>
             <div class="canvas">
-                <svg id="canvas" width="800" height="600" style="border:solid 1px #4b5151" ></svg>
+                <svg id="canvas" style="border:solid 1px #4b5151"></svg>
             </div>
         </div>
 
         <script src="js/api.js"></script>
         <script src="js/snap.svg-min.js"></script>
+
+        <script src="js/concept.js"></script>
+        <script src="js/relation.js"></script>
         <script src="js/app-new.js"></script>
     </body>
 </html>

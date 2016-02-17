@@ -22,7 +22,7 @@
 
     function loadMap(mapID, successCallback) {
         YUI().use("io-base", function (Y) {
-            var uri = apiAdress + '/data.php?id=' + mapID;
+            var uri = apiAdress + 'data.php?id=' + mapID;
 
             // Define a function to handle the response data            
             function success(id,o, args){
@@ -108,7 +108,7 @@
     function createMap(title) {
         var requestResponse;
         YUI().use('io-xdr', function (Y) {
-            var uri = apiAdress + "/data.php",
+            var uri = apiAdress + "data.php",
                 json = {
                     "title": title
                 },
@@ -135,11 +135,12 @@
         currentMap = JSON.parse(requestResponse).map;
     }
 
-    function saveMap() {
+    function saveMap(currentMap) {
         var requestResponse;
         YUI().use('io-base', function (Y) {
-            var uri = apiAdress + "/data.php?id=" + currentMap.id,
+            var uri = apiAdress + "data.php?id=" + currentMap.id,
                 json = {
+                    "id": currentMap.id,
                     "concepts": currentMap.concepts,
                     "relationships": currentMap.relationships
                 },
@@ -163,7 +164,7 @@
     function deleteMap(id) {
         var requestResponse;
         YUI().use('io-base', function (Y) {
-            var uri = apiAdress + "/data.php?id=" + id,
+            var uri = apiAdress + "data.php?id=" + id,
                 cfg = {
                     method: 'DELETE',
                     on: {
@@ -179,7 +180,7 @@
 
     function mapsList(successCallback) {
         YUI().use("io-base", function (Y) {
-            var uri = apiAdress + '/data.php';
+            var uri = apiAdress + 'data.php';
 
             // Define a function to handle the response data.
             function success(id, o, args) {
